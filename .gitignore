@@ -5,3 +5,4 @@ stripe_setup.log
 *.log
 verdikt.db
 evidence_cache/
+verdikt.env
