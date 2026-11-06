@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verdikt · Console</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070d; --panel:rgba(255,255,255,.028); --line:rgba(52,211,153,.16);
+    --em:#34d399; --em2:#10b981; --text:#e8ecf4; --muted:#98a1b3; --dim:#7c8798;
+    --red:#f87171; --amber:#fbbf24; --mono:ui-monospace,'SF Mono','Cascadia Code',Menlo,Consolas,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);
+    background-image:linear-gradient(rgba(52,211,153,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(52,211,153,.045) 1px,transparent 1px);
+    background-size:64px 64px}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+  header{display:flex;align-items:center;gap:10px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:18px;flex-wrap:wrap}
+  .mark{width:26px;height:26px;border-radius:7px;background:linear-gradient(160deg,var(--em),var(--em2));color:#04120c;
+    display:grid;place-items:center;font:700 14px var(--mono)}
+  h1{font:700 15px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;margin:0}
+  h1 span{color:var(--em)}
+  .spacer{flex:1}
+  .plan{font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--em);
+    border:1px solid var(--line);border-radius:99px;padding:5px 11px}
+  .grid{display:grid;grid-template-columns:340px minmax(0,1fr);gap:14px;align-items:start}
+  .panel{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.006))}
+  .panel::before,.panel::after{content:"";position:absolute;width:9px;height:9px;border:1px solid rgba(52,211,153,.45);pointer-events:none}
+  .panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+  .panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+  .ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);
+    font:600 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--em)}
+  .ph em{font-style:normal;color:var(--dim);letter-spacing:.06em}
+  .pb{padding:12px}
+  label{display:block;font:600 9.5px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin:0 0 5px}
+  input,textarea,select{width:100%;background:#070b10;border:1px solid rgba(255,255,255,.12);color:var(--text);
+    border-radius:8px;padding:10px 11px;font:13px/1.5 var(--mono);outline:none}
+  input:focus,textarea:focus,select:focus{border-color:var(--em);box-shadow:0 0 0 3px rgba(52,211,153,.12)}
+  textarea{min-height:96px;resize:vertical}
+  .row{display:flex;gap:8px;margin-top:10px}
+  .row>*{flex:1}
+  button{cursor:pointer;border:0;border-radius:8px;padding:11px 14px;font:600 12.5px var(--sans);transition:.15s}
+  .primary{background:var(--em);color:#04120c}
+  .primary:hover{background:#4ade80}
+  .ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.16)}
+  .ghost:hover{border-color:var(--em);color:var(--em)}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .kv{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.07);
+    font:600 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .kv:last-child{border-bottom:0}
+  .kv b{font-size:14px;letter-spacing:0;color:var(--text)}
+  .kv b.em{color:var(--em)} .kv b.rd{color:var(--red)} .kv b.am{color:var(--amber)}
+  .term{font:11px/1.75 var(--mono);color:#93a3b6;background:#070b10;border:1px solid rgba(255,255,255,.08);
+    border-radius:8px;padding:10px;height:120px;overflow:auto;margin-top:10px}
+  .term .ln{opacity:0;transform:translateY(4px);animation:rowin .3s ease forwards}
+  .term .k{color:var(--em)} .term .w{color:var(--amber)} .term .b{color:var(--red)} .term .mut{color:#5d6b7c}
+  @keyframes rowin{to{opacity:1;transform:none}}
+  .card{border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:12px;background:rgba(255,255,255,.02)}
+  .pill{display:inline-flex;align-items:center;gap:6px;font:600 10.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;
+    padding:5px 10px;border-radius:99px;border:1px solid}
+  .p-true{color:var(--em);border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08)}
+  .p-false{color:var(--red);border-color:rgba(248,113,113,.4);background:rgba(248,113,113,.08)}
+  .p-misleading{color:var(--amber);border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.08)}
+  .p-unverifiable{color:#94a3b8;border-color:rgba(148,163,184,.4);background:rgba(148,163,184,.08)}
+  .conf{float:right;font:11px var(--mono);color:var(--dim)}
+  .conf b{color:var(--text)}
+  .bar{height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin:10px 0 12px;overflow:hidden}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--em2),var(--em));transform-origin:left;transform:scaleX(0);transition:transform .45s ease}
+  .claim{font:12.5px var(--mono);color:var(--muted);margin-bottom:8px}
+  .claim b{color:var(--text)}
+  .expl{font-size:13.5px;color:#c8d0dc;margin-bottom:10px}
+  .srcs{font:11px var(--mono);color:var(--dim);word-break:break-all}
+  .srcs a{color:var(--em);text-decoration:none}
+  .probs{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0;font:10.5px var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:.08em}
+  .probs b{color:var(--text);margin-left:5px}
+  table{width:100%;border-collapse:collapse;font:11.5px var(--mono)}
+  th{text-align:left;font:600 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+    padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.08)}
+  td{padding:7px 8px;border-bottom:1px solid rgba(255,255,255,.05);color:var(--muted)}
+  tr:hover td{background:rgba(52,211,153,.04);cursor:pointer}
+  td.v-true{color:var(--em)} td.v-false{color:var(--red)} td.v-misleading{color:var(--amber)}
+  .empty{color:var(--dim);font:11.5px var(--mono);padding:10px 0}
+  .strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);
+    border-radius:10px;overflow:hidden;margin-top:14px}
+  .strip>div{background:#070b10;padding:9px 12px}
+  .strip .l{font:600 9.5px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+  .strip .v{font:15px var(--mono);color:var(--text);margin-top:5px}
+  .strip .v.em{color:var(--em)}
+  .hint{font:10px var(--mono);color:var(--dim);margin-top:8px;letter-spacing:.03em}
+  .rec{background:transparent;border:1px solid rgba(248,113,113,.45);color:#f87171;display:flex;align-items:center;gap:7px;justify-content:center}
+  .rec:hover{background:rgba(248,113,113,.08)}
+  .rec.on{background:#f87171;color:#1a0505;border-color:#f87171;animation:recpulse 1.4s ease-in-out infinite}
+  .rec i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+  @keyframes recpulse{50%{opacity:.62}}
+  .transcript{border:1px dashed rgba(255,255,255,.14);border-radius:8px;padding:10px;margin:10px 0;font:12px/1.6 var(--mono);color:var(--muted)}
+  .transcript b{color:var(--em);font:600 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:5px}
+  .integ{margin-top:14px}
+  .tabs2{display:flex;gap:6px;margin:0 0 16px}
+  .t2{background:transparent;border:1px solid rgba(255,255,255,.14);color:var(--muted);border-radius:9px;
+    padding:9px 15px;font:600 12px var(--sans);cursor:pointer;transition:.15s}
+  .t2:hover{color:var(--text);border-color:rgba(255,255,255,.28)}
+  .t2.on{color:var(--em);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.08)}
+  .big{font:700 26px/1.2 var(--sans);letter-spacing:-.02em;margin:0 0 4px}
+  .lede{color:var(--muted);font-size:14px;margin:0 0 16px}
+  .ways{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .way{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;
+    background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:14px;
+    color:var(--text);cursor:pointer;transition:.16s;font-family:inherit}
+  .way:hover{border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.05);transform:translateY(-1px)}
+  .way b{font:600 14px var(--sans);margin-top:2px}
+  .way span:not(.wi){font-size:12.5px;color:var(--muted);line-height:1.45}
+  .wi{font-size:20px;line-height:1}
+  .way-link{cursor:default}
+  .way-link:hover{transform:none}
+  .linkrow{display:flex;gap:8px;margin-top:10px;width:100%}
+  .linkrow input{flex:1}
+  .linkrow button{flex:0 0 auto;padding:10px 16px}
+  details.dev{margin-top:14px;border-top:1px solid rgba(255,255,255,.07);padding-top:12px}
+  details.dev summary{cursor:pointer;font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:12px}
+  details.dev summary:hover{color:var(--em)}
+  @media(max-width:700px){.ways{grid-template-columns:1fr}}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .tab{background:transparent;border:1px solid rgba(255,255,255,.14);color:var(--muted);border-radius:7px;padding:6px 11px;
+    font:600 10.5px var(--mono);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+  .tab.on{color:var(--em);border-color:rgba(52,211,153,.45);background:rgba(52,211,153,.07)}
+  pre{margin:0;background:#070b10;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px;
+    font:11.5px/1.65 var(--mono);color:#a9b6c7;overflow:auto;max-height:230px}
+  .copy{position:absolute;top:8px;right:8px;padding:5px 9px;font:600 9.5px var(--mono);letter-spacing:.1em;
+    text-transform:uppercase;background:rgba(52,211,153,.12);color:var(--em);border:1px solid rgba(52,211,153,.35);border-radius:6px}
+  .codewrap{position:relative}
+  .ep{width:100%;border-collapse:collapse;font:11.5px var(--mono);margin-top:12px}
+  .ep td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.05)}
+  .ep td:first-child{color:var(--em);white-space:nowrap}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}.strip{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark">V</div>
+    <h1>Verdikt <span>//</span> Console</h1>
+    <div class="spacer"></div>
+    <span class="plan" id="plan">no key</span>
+  </header>
+
+  <div class="tabs2">
+    <button class="t2 on" id="tb-check" onclick="showTab('check')">Check something</button>
+    <button class="t2" id="tb-tech" onclick="showTab('tech')">Technical</button>
+  </div>
+
+  <section id="tab-check">
+    <h2 class="big">What do you want to check?</h2>
+    <p class="lede">Four ways. No code, no setup.</p>
+
+    <div class="ways">
+      <button class="way" onclick="focusClaim()">
+        <span class="wi">⌨</span>
+        <b>Type or paste a claim</b>
+        <span>Write it, press Verify, get the verdict with sources.</span>
+      </button>
+      <button class="way" onclick="toggleRec()">
+        <span class="wi">🎙</span>
+        <b>Say it out loud</b>
+        <span>Press record and speak. It writes down what you said and checks it.</span>
+      </button>
+      <button class="way" onclick="document.getElementById('file').click()">
+        <span class="wi">📎</span>
+        <b>Upload a voice note or video</b>
+        <span>WhatsApp voice note, interview, podcast clip. Up to 25 MB.</span>
+      </button>
+      <div class="way way-link">
+        <span class="wi">🔗</span>
+        <b>Paste a link</b>
+        <span>An article or a YouTube video. It reads it and checks the claims.</span>
+        <div class="linkrow">
+          <input id="url" type="url" placeholder="https://…" autocomplete="off">
+          <button class="primary" onclick="checkUrl()">Check</button>
+        </div>
+      </div>
+    </div>
+    <input id="file" type="file" accept="audio/*,video/*" style="display:none" onchange="uploadFile(this)">
+
+    <section class="panel" style="margin-top:14px">
+      <div class="ph">Your claim <em id="lat">ready</em></div>
+      <div class="pb">
+        <textarea id="text" placeholder="Paste a claim, a paragraph, or a news line…"></textarea>
+        <div class="row">
+          <select id="maxc" aria-label="max claims">
+            <option value="1">1 claim</option>
+            <option value="3" selected>up to 3 claims</option>
+            <option value="5">up to 5 claims</option>
+          </select>
+          <button class="rec" id="rec" onclick="toggleRec()" title="Record audio"><i></i><span>Record</span></button>
+          <button class="primary" id="run" onclick="run()">Verify</button>
+        </div>
+        <div id="transcript"></div>
+        <div id="out"></div>
+      </div>
+    </section>
+  </section>
+
+  <section id="tab-tech" style="display:none">
+    <div class="grid">
+      <div>
+        <section class="panel">
+          <div class="ph">API key <em id="key-state">—</em></div>
+          <div class="pb">
+            <label>Your key</label>
+            <input id="key" type="password" placeholder="vk_…" autocomplete="off">
+            <div class="row">
+              <button class="ghost" onclick="saveKey()">Use key</button>
+              <button class="primary" onclick="newKey()">Create free key</button>
+            </div>
+            <div class="hint">Stored in this browser only.</div>
+          </div>
+        </section>
+        <section class="panel" style="margin-top:14px">
+          <div class="ph">Account</div>
+          <div class="pb">
+            <div class="kv"><span>Plan</span><b id="a-plan">—</b></div>
+            <div class="kv"><span>Used today</span><b id="a-used">—</b></div>
+            <div class="kv"><span>Limit</span><b id="a-limit">—</b></div>
+            <div class="kv"><span>Checks (history)</span><b id="a-hist">0</b></div>
+            <div class="kv"><span>Avg confidence</span><b id="a-conf">—</b></div>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section class="panel">
+          <div class="ph">Engine log <em>raw</em></div>
+          <div class="pb">
+            <div class="term" id="term"><div class="ln mut">&gt;&gt;&gt; console ready · key required</div></div>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top:14px">
+          <div class="ph">History <em id="hist-state">—</em></div>
+          <div class="pb" style="overflow-x:auto">
+            <table>
+              <thead><tr><th>When</th><th>Claim</th><th>Verdict</th><th>Conf</th><th>ms</th><th>Src</th></tr></thead>
+              <tbody id="hist"><tr><td colspan="6" class="empty">No checks yet.</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top:14px">
+          <div class="ph">For developers <em>API</em></div>
+          <div class="pb">
+            <div class="tabs" id="tabs">
+              <button class="tab on" data-t="curl" onclick="pickTab('curl')">cURL</button>
+              <button class="tab" data-t="python" onclick="pickTab('python')">Python</button>
+              <button class="tab" data-t="node" onclick="pickTab('node')">Node</button>
+              <button class="tab" data-t="audio" onclick="pickTab('audio')">Audio</button>
+              <button class="tab" data-t="bot" onclick="pickTab('bot')">Telegram</button>
+            </div>
+            <div class="codewrap">
+              <button class="copy" onclick="copySnippet()">Copy</button>
+              <pre id="snippet">loading…</pre>
+            </div>
+            <table class="ep">
+              <tr><td>POST /v1/check</td><td>text → claims + verdicts</td><td>1 credit</td></tr>
+              <tr><td>POST /v1/check/audio</td><td>audio/video file → transcript + verdicts</td><td>3 credits</td></tr>
+              <tr><td>POST /v1/check/url</td><td>article or YouTube link → verdicts</td><td>2 credits</td></tr>
+              <tr><td>GET /v1/checks</td><td>your last 50 checks</td><td>free</td></tr>
+              <tr><td>GET /v1/usage</td><td>plan + used today</td><td>free</td></tr>
+            </table>
+            <div class="hint">Auth: header <b>X-API-Key</b>. Base URL: https://verdikt.mazzagrp.com</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  
+    <div class="strip">
+    <div><div class="l">Engine</div><div class="v em" id="m-engine">idle</div></div>
+    <div><div class="l">Checks today</div><div class="v" id="m-today">0</div></div>
+    <div><div class="l">Last verdict</div><div class="v" id="m-verdict">—</div></div>
+    <div><div class="l">Last latency</div><div class="v" id="m-lat">—</div></div>
+    <div><div class="l">Avg confidence</div><div class="v" id="m-conf">—</div></div>
+  </div>
+  </section>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+let KEY = localStorage.getItem('vk_key') || '';
+
+function tline(html, cls) {
+  const t = $('term');
+  const d = document.createElement('div');
+  d.className = 'ln' + (cls ? ' ' + cls : '');
+  d.innerHTML = html;
+  t.appendChild(d); t.scrollTop = t.scrollHeight;
+}
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+function saveKey() {
+  const v = $('key').value.trim();
+  if (!v) return;
+  KEY = v; localStorage.setItem('vk_key', v);
+  refresh();
+}
+async function newKey() {
+  $('run').disabled = true;
+  try {
+    const r = await fetch('/v1/signup', {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const d = await r.json();
+    KEY = d.api_key; localStorage.setItem('vk_key', KEY);
+    $('key').value = KEY;
+    tline('<span class="k">&gt;&gt;&gt; key created</span> plan=' + d.plan + ' limit=' + d.daily_limit);
+    refresh();
+  } catch (e) { tline('<span class="b">! key creation failed</span>', ''); }
+  $('run').disabled = false;
+}
+
+let REFRESH_SEQ = 0;
+async function refresh() {
+  if (!KEY) { set('key-state','missing'); set('plan','no key'); return; }
+  const seq = ++REFRESH_SEQ;
+  set('key-state', KEY.slice(0,6) + '…');
+  try {
+    const r = await fetch('/v1/checks', {headers:{'X-API-Key': KEY}});
+    if (r.status === 401) { set('key-state','invalid'); set('plan','invalid'); return; }
+    const d = await r.json();
+    if (seq !== REFRESH_SEQ) return;  // a newer refresh already landed
+    const u = d.usage || {};
+    const pl = (u.plan || 'free');
+    set('plan', pl === 'owner' ? 'OWNER · UNLIMITED' : pl.toUpperCase() + ' PLAN');
+    set('a-plan', u.plan || '—');
+    set('a-used', u.used_today ?? '—');
+    set('a-limit', u.plan === 'owner' ? '∞' : (u.plan === 'pro' ? 5000 : 100));
+    set('m-today', u.used_today ?? 0);
+    renderHistory(d.checks || []);
+  } catch (e) { set('key-state','error'); }
+}
+
+function renderHistory(rows) {
+  const tb = $('hist');
+  set('a-hist', rows.length);
+  set('hist-state', rows.length + ' checks');
+  if (!rows.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">No checks yet.</td></tr>'; return; }
+  const confs = rows.map(r => r.confidence || 0);
+  const avg = Math.round(confs.reduce((a,b)=>a+b,0)/confs.length*100);
+  set('a-conf', avg + '%'); set('m-conf', avg + '%');
+  tb.innerHTML = rows.map(r => {
+    const t = new Date(r.ts * 1000);
+    const hh = String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+    return '<tr onclick="reuse(this)" data-claim="' + esc(r.claim) + '">' +
+      '<td>' + hh + '</td>' +
+      '<td title="' + esc(r.claim) + '">' + esc(r.claim.slice(0, 58)) + (r.claim.length > 58 ? '…' : '') + '</td>' +
+      '<td class="v-' + r.verdict + '">' + r.verdict + '</td>' +
+      '<td>' + Math.round((r.confidence||0)*100) + '%</td>' +
+      '<td>' + (r.ms||0) + '</td>' +
+      '<td>' + (r.sources||0) + '</td></tr>';
+  }).join('');
+}
+function reuse(tr) { $('text').value = tr.dataset.claim; $('text').focus(); }
+
+async function run() {
+  const text = $('text').value.trim();
+  if (!text) { $('text').focus(); return; }
+  if (!KEY) { tline('<span class="w">! add an API key first</span>'); return; }
+  const btn = $('run');
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  $('out').innerHTML = '';
+  set('m-engine','running'); set('lat','running');
+  $('term').innerHTML = '';
+  tline('<span class="k">&gt;&gt;&gt; tool_call</span> check_claim');
+  tline('<span class="mut">{ "text": "' + esc(text.slice(0,60)) + (text.length>60?'…':'') + '", "max_claims": ' + $('maxc').value + ' }</span>');
+  const t0 = performance.now();
+  try {
+    const r = await fetch('/v1/check', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-API-Key':KEY},
+      body: JSON.stringify({text, max_claims: parseInt($('maxc').value,10)})
+    });
+    const d = await r.json();
+    const ms = Math.round(performance.now() - t0);
+    if (!r.ok) throw new Error(d.error || ('http ' + r.status));
+    tline('<span class="k">←</span> 200 OK · ' + ms + 'ms · ' + d.results.length + ' claim(s)');
+    if (d.quota) { set('a-used', d.quota.used_today); set('m-today', d.quota.used_today); }
+    $('out').innerHTML = d.results.map(v => {
+      const cls = 'p-' + v.verdict;
+      const conf = Math.round((v.confidence||0)*100);
+      const probs = Object.entries(v.probabilities||{}).map(([k,val]) =>
+        '<span>' + k + '<b>' + Math.round(val*100) + '%</b></span>').join('');
+      const srcs = (v.sources||[]).slice(0,5).map(u =>
+        '<a href="' + u + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//,'').split('/')[0]) + '</a>').join(' · ');
+      return '<div class="card">' +
+        '<span class="pill ' + cls + '">' + v.verdict + '</span>' +
+        '<span class="conf">confidence <b>' + conf + '%</b></span>' +
+        '<div class="bar"><i style="transform:scaleX(' + (v.confidence||0) + ')"></i></div>' +
+        '<div class="claim">Claim: <b>' + esc(v.claim) + '</b></div>' +
+        '<div class="expl">' + esc(v.explanation || '') + '</div>' +
+        (probs ? '<div class="probs">' + probs + '</div>' : '') +
+        (srcs ? '<div class="srcs">Sources: ' + srcs + '</div>' : '') +
+      '</div>';
+    }).join('');
+    const last = d.results[d.results.length-1];
+    set('m-verdict', last ? last.verdict : '—');
+    set('m-lat', ms + 'ms'); set('lat', 'done');
+    set('m-engine','ready');
+    tline('<span class="k">&gt;&gt;&gt; done</span> ' + d.results.length + ' verdict(s)');
+    refresh();
+  } catch (e) {
+    tline('<span class="b">! ' + esc(String(e.message||e)) + '</span>');
+    set('m-engine','error'); set('lat','error');
+    $('out').innerHTML = '<div class="card"><span class="pill p-unverifiable">error</span><div class="expl">' + esc(String(e.message||e)) + '</div></div>';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verify';
+  }
+}
+
+
+/* ── audio recording ─────────────────────────────── */
+let mediaRec = null, chunks = [], recTimer = null, recStart = 0;
+
+async function toggleRec() {
+  const btn = $('rec');
+  if (mediaRec && mediaRec.state === 'recording') { mediaRec.stop(); return; }
+  if (!navigator.mediaDevices || !window.MediaRecorder) {
+    tline('<span class="b">! microphone not available in this browser</span>'); return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    chunks = [];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    mediaRec.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(recTimer);
+      btn.classList.remove('on');
+      btn.innerHTML = '<i></i><span>Record</span>';
+      const blob = new Blob(chunks, { type: chunks[0]?.type || 'audio/webm' });
+      await sendAudio(blob, 'recording.webm');
+    };
+    mediaRec.start();
+    recStart = Date.now();
+    btn.classList.add('on');
+    recTimer = setInterval(() => {
+      const s = Math.floor((Date.now() - recStart) / 1000);
+      btn.innerHTML = '<i></i><span>Stop ' + String(Math.floor(s / 60)).padStart(2,'0') + ':' + String(s % 60).padStart(2,'0') + '</span>';
+    }, 250);
+    tline('<span class="k">&gt;&gt;&gt; recording</span> speak the claim…');
+  } catch (e) {
+    tline('<span class="b">! mic permission denied</span>');
+  }
+}
+
+async function sendAudio(blob, name) {
+  if (!KEY) { tline('<span class="w">! add an API key first</span>'); return; }
+  const btn = $('run');
+  btn.disabled = true;
+  $('term').innerHTML = '';
+  set('m-engine', 'transcribing'); set('lat', 'audio');
+  tline('<span class="mut">audio ' + Math.round(blob.size / 1024) + ' KB · uploading</span>');
+  const fd = new FormData();
+  fd.append('file', blob, name || 'audio.webm');
+  fd.append('max_claims', $('maxc').value);
+  const t0 = performance.now();
+  try {
+    const r = await fetch('/v1/check/audio', { method: 'POST', headers: { 'X-API-Key': KEY }, body: fd });
+    const d = await r.json();
+    const ms = Math.round(performance.now() - t0);
+    if (!r.ok) throw new Error(d.error || ('http ' + r.status));
+    tline('<span class="k">←</span> 200 OK · ' + ms + 'ms · transcript ' + d.transcript.length + ' chars');
+    $('transcript').innerHTML = '<div class="transcript"><b>Transcript</b>' + esc(d.transcript) + '</div>';
+    renderResults(d.results);
+    set('m-lat', ms + 'ms'); set('lat', 'done'); set('m-engine', 'ready');
+    refresh();
+  } catch (e) {
+    tline('<span class="b">! ' + esc(String(e.message || e)) + '</span>');
+    set('m-engine', 'error'); set('lat', 'try again');
+  } finally { btn.disabled = false; }
+}
+
+function renderResults(results) {
+  $('out').innerHTML = results.map(v => {
+    const cls = 'p-' + v.verdict;
+    const conf = Math.round((v.confidence || 0) * 100);
+    const probs = Object.entries(v.probabilities || {}).map(([k, val]) =>
+      '<span>' + k + '<b>' + Math.round(val * 100) + '%</b></span>').join('');
+    const srcs = (v.sources || []).slice(0, 5).map(u =>
+      '<a href="' + u + '" target="_blank" rel="noopener">' + esc(u.replace(/^https?:\/\//, '').split('/')[0]) + '</a>').join(' · ');
+    return '<div class="card"><span class="pill ' + cls + '">' + v.verdict + '</span>' +
+      '<span class="conf">confidence <b>' + conf + '%</b></span>' +
+      '<div class="bar"><i style="transform:scaleX(' + (v.confidence || 0) + ')"></i></div>' +
+      '<div class="claim">Claim: <b>' + esc(v.claim) + '</b></div>' +
+      '<div class="expl">' + esc(v.explanation || '') + '</div>' +
+      (probs ? '<div class="probs">' + probs + '</div>' : '') +
+      (srcs ? '<div class="srcs">Sources: ' + srcs + '</div>' : '') + '</div>';
+  }).join('');
+}
+
+
+/* ── tabs ────────────────────────────────────────── */
+function showTab(which) {
+  const check = which === 'check';
+  $('tab-check').style.display = check ? '' : 'none';
+  $('tab-tech').style.display = check ? 'none' : '';
+  $('tb-check').classList.toggle('on', check);
+  $('tb-tech').classList.toggle('on', !check);
+  localStorage.setItem('vk_tab', which);
+  if (!check) refresh();
+}
+
+/* ── no-code entry points ────────────────────────── */
+function focusClaim() {
+  const t = $('text');
+  t.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => t.focus(), 300);
+}
+
+function uploadFile(input) {
+  const f = input.files && input.files[0];
+  if (!f) return;
+  if (f.size > 25 * 1024 * 1024) { tline('<span class="b">! file too big (max 25 MB)</span>'); return; }
+  tline('<span class="mut">file: ' + esc(f.name) + ' · ' + Math.round(f.size / 1024) + ' KB</span>');
+  sendAudio(f, f.name);
+  input.value = '';
+}
+
+async function checkUrl() {
+  const url = ($('url').value || '').trim();
+  if (!url) { $('url').focus(); return; }
+  if (!KEY) { tline('<span class="w">! add an API key first</span>'); return; }
+  $('out').innerHTML = ''; $('transcript').innerHTML = '';
+  set('m-engine', 'reading link'); set('lat', 'link');
+  $('term').innerHTML = '';
+  tline('<span class="k">&gt;&gt;&gt; reading link</span> ' + esc(url.slice(0, 70)));
+  const t0 = performance.now();
+  try {
+    const r = await fetch('/v1/check/url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': KEY },
+      body: JSON.stringify({ url, max_claims: parseInt($('maxc').value, 10) })
+    });
+    const d = await r.json();
+    const ms = Math.round(performance.now() - t0);
+    if (!r.ok) throw new Error(d.error || ('http ' + r.status));
+    tline('<span class="k">←</span> 200 OK · ' + ms + 'ms · ' + d.extracted_chars + ' chars read');
+    tline('<span class="mut">' + d.results.length + ' claim(s) found</span>');
+    renderResults(d.results);
+    set('m-lat', ms + 'ms'); set('lat', 'done'); set('m-engine', 'ready');
+    refresh();
+  } catch (e) {
+    tline('<span class="b">! ' + esc(String(e.message || e)) + '</span>');
+    set('m-engine', 'error'); set('lat', 'try again');
+  }
+}
+
+/* ── integrations snippets ───────────────────────── */
+const BASE = 'https://verdikt.mazzagrp.com';
+const SNIP = {
+  curl: () => `curl -X POST ${BASE}/v1/check \\
+  -H "Content-Type: application/json" \\
+  -H "X-API-Key: ${KEY || 'vk_your_key'}" \\
+  -d '{"text": "The Eiffel Tower is in London.", "max_claims": 3}'`,
+  python: () => `import requests
+
+r = requests.post("${BASE}/v1/check",
+    headers={"X-API-Key": "${KEY || 'vk_your_key'}"},
+    json={"text": "The Eiffel Tower is in London.", "max_claims": 3},
+    timeout=120)
+
+for v in r.json()["results"]:
+    print(v["verdict"], round(v["confidence"]*100), v["claim"])`,
+  node: () => `const r = await fetch("${BASE}/v1/check", {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-API-Key": "${KEY || 'vk_your_key'}" },
+  body: JSON.stringify({ text: "The Eiffel Tower is in London.", max_claims: 3 })
+});
+const { results } = await r.json();
+console.log(results.map(v => v.verdict + " " + Math.round(v.confidence * 100) + "%"));`,
+  audio: () => `curl -X POST ${BASE}/v1/check/audio \\
+  -H "X-API-Key: ${KEY || 'vk_your_key'}" \\
+  -F "file=@recording.webm" \\
+  -F "max_claims=3"`,
+  bot: () => `# Telegram bot (fact-checker in chat)
+# 1. create a bot with @BotFather, copy the token
+export FACTCHECKER_BOT_TOKEN="123456:ABC..."
+python3 /root/factchecker/telegram_bot.py
+
+# then send any voice note or text to your bot:
+#   voice note -> transcribe -> claims -> verdicts
+#   text       -> claims -> verdicts`
+};
+
+function pickTab(t) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  $('snippet').textContent = SNIP[t]();
+}
+function copySnippet() {
+  navigator.clipboard.writeText($('snippet').textContent).then(() => {
+    const b = document.querySelector('.copy');
+    b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1400);
+  });
+}
+
+/* ── boot ─────────────────────────────────────────── */
+async function boot() {
+  $('key').value = KEY;
+  if (!KEY) {
+    try {
+      const r = await fetch('/v1/owner/key');
+      if (r.ok) {
+        const d = await r.json();
+        KEY = d.api_key; localStorage.setItem('vk_key', KEY); $('key').value = KEY;
+        tline('<span class="k">&gt;&gt;&gt; owner key loaded</span> plan=' + d.plan);
+      }
+    } catch (e) {}
+  }
+  pickTab('curl');
+  showTab(localStorage.getItem('vk_tab') === 'tech' ? 'tech' : 'check');
+  if (KEY) refresh(); else set('key-state', 'missing');
+}
+boot();
+$('text').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) run(); });
+
+</script>
+</body>
+</html>

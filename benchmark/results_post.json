@@ -1,0 +1,952 @@
+[
+ {
+  "id": "EN01",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "Water boils at 100 degrees Celsius at standard atmospheric pressure at sea level.",
+  "api_claim": "Water boils at 100 degrees Celsius at standard atmospheric pressure at sea level.",
+  "verdict": "true",
+  "confidence": 0.965,
+  "probabilities": {
+   "true": 0.9647,
+   "false": 0.0081,
+   "misleading": 0.0178,
+   "unverifiable": 0.0094
+  },
+  "evidence_strength": 2.73,
+  "n_sources": 3,
+  "elapsed_s": 1.7
+ },
+ {
+  "id": "EN02",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "true",
+  "sent": "The first crewed Moon landing took place in 1969.",
+  "api_claim": "The first crewed Moon landing took place in 1969.",
+  "verdict": "true",
+  "confidence": 0.98,
+  "probabilities": {
+   "true": 0.9799,
+   "false": 0.0053,
+   "misleading": 0.0073,
+   "unverifiable": 0.0075
+  },
+  "evidence_strength": 2.64,
+  "n_sources": 3,
+  "elapsed_s": 1.5
+ },
+ {
+  "id": "EN03",
+  "lang": "en",
+  "cat": "nums",
+  "expected": "true",
+  "sent": "The adult human skeleton contains 206 bones.",
+  "api_claim": "The adult human skeleton contains 206 bones.",
+  "verdict": "true",
+  "confidence": 0.981,
+  "probabilities": {
+   "true": 0.9814,
+   "false": 0.0052,
+   "misleading": 0.0064,
+   "unverifiable": 0.007
+  },
+  "evidence_strength": 2.53,
+  "n_sources": 3,
+  "elapsed_s": 1.7
+ },
+ {
+  "id": "EN04",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "Venus is the hottest planet in the Solar System.",
+  "api_claim": "Venus è il pianeta più caldo del Sistema Solare.",
+  "verdict": "true",
+  "confidence": 0.982,
+  "probabilities": {
+   "true": 0.982,
+   "false": 0.0049,
+   "misleading": 0.0064,
+   "unverifiable": 0.0067
+  },
+  "evidence_strength": 2.77,
+  "n_sources": 3,
+  "elapsed_s": 18.2
+ },
+ {
+  "id": "EN05",
+  "lang": "en",
+  "cat": "geo",
+  "expected": "true",
+  "sent": "The Amazon River is the largest river in the world by discharge volume.",
+  "api_claim": "The Amazon River is the largest river in the world by discharge volume.",
+  "verdict": "true",
+  "confidence": 0.978,
+  "probabilities": {
+   "true": 0.9776,
+   "false": 0.0056,
+   "misleading": 0.0085,
+   "unverifiable": 0.0083
+  },
+  "evidence_strength": 2.72,
+  "n_sources": 3,
+  "elapsed_s": 1.6
+ },
+ {
+  "id": "EN06",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "The Earth's atmosphere is about 78 percent nitrogen and about 21 percent oxygen.",
+  "api_claim": "The Earth's atmosphere is about 78 percent nitrogen and about 21 percent oxygen.",
+  "verdict": "true",
+  "confidence": 0.836,
+  "probabilities": {
+   "true": 0.8362,
+   "false": 0.02,
+   "misleading": 0.1163,
+   "unverifiable": 0.0275
+  },
+  "evidence_strength": 2.67,
+  "n_sources": 3,
+  "elapsed_s": 2.1
+ },
+ {
+  "id": "EN07",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "true",
+  "sent": "The Berlin Wall fell in 1989.",
+  "api_claim": "The Berlin Wall fell in 1989.",
+  "verdict": "true",
+  "confidence": 0.98,
+  "probabilities": {
+   "true": 0.9796,
+   "false": 0.0056,
+   "misleading": 0.0078,
+   "unverifiable": 0.007
+  },
+  "evidence_strength": 2.73,
+  "n_sources": 3,
+  "elapsed_s": 1.5
+ },
+ {
+  "id": "EN08",
+  "lang": "en",
+  "cat": "nums",
+  "expected": "true",
+  "sent": "There are 1440 minutes in 24 hours.",
+  "api_claim": "There are 1440 minutes in 24 hours.",
+  "verdict": "true",
+  "confidence": 0.982,
+  "probabilities": {
+   "true": 0.9818,
+   "false": 0.0053,
+   "misleading": 0.0059,
+   "unverifiable": 0.007
+  },
+  "evidence_strength": 2.66,
+  "n_sources": 3,
+  "elapsed_s": 2.0
+ },
+ {
+  "id": "EN09",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "The Moon is moving away from Earth at about 3.8 centimeters per year.",
+  "api_claim": "The Moon is moving away from Earth at about 3.8 centimeters per year.",
+  "verdict": "true",
+  "confidence": 0.98,
+  "probabilities": {
+   "true": 0.9804,
+   "false": 0.0057,
+   "misleading": 0.0069,
+   "unverifiable": 0.007
+  },
+  "evidence_strength": 2.65,
+  "n_sources": 3,
+  "elapsed_s": 2.8
+ },
+ {
+  "id": "EN10",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "false",
+  "sent": "The Great Pyramids of Giza were built by the ancient Romans.",
+  "api_claim": "The Great Pyramids of Giza were built by the ancient Romans.",
+  "verdict": "false",
+  "confidence": 0.975,
+  "probabilities": {
+   "true": 0.0047,
+   "false": 0.9745,
+   "misleading": 0.0113,
+   "unverifiable": 0.0095
+  },
+  "evidence_strength": 2.7,
+  "n_sources": 3,
+  "elapsed_s": 2.0
+ },
+ {
+  "id": "EN11",
+  "lang": "en",
+  "cat": "sports",
+  "expected": "false",
+  "sent": "Michael Jordan won 10 NBA championships.",
+  "api_claim": "Michael Jordan won 10 NBA championships.",
+  "verdict": "unverifiable",
+  "confidence": 0.425,
+  "probabilities": {
+   "true": 0.0161,
+   "false": 0.2236,
+   "misleading": 0.3353,
+   "unverifiable": 0.425
+  },
+  "evidence_strength": 1.55,
+  "n_sources": 3,
+  "elapsed_s": 1.1
+ },
+ {
+  "id": "EN12",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "false",
+  "sent": "Sound travels faster than light in air.",
+  "api_claim": "Sound travels faster than light in air.",
+  "verdict": "false",
+  "confidence": 0.985,
+  "probabilities": {
+   "true": 0.0034,
+   "false": 0.9848,
+   "misleading": 0.0058,
+   "unverifiable": 0.006
+  },
+  "evidence_strength": 2.69,
+  "n_sources": 3,
+  "elapsed_s": 1.9
+ },
+ {
+  "id": "EN13",
+  "lang": "en",
+  "cat": "geo",
+  "expected": "false",
+  "sent": "The Pacific Ocean is the smallest ocean on Earth.",
+  "api_claim": "The Pacific Ocean is the smallest ocean on Earth.",
+  "verdict": "false",
+  "confidence": 0.975,
+  "probabilities": {
+   "true": 0.0047,
+   "false": 0.9748,
+   "misleading": 0.0101,
+   "unverifiable": 0.0104
+  },
+  "evidence_strength": 2.81,
+  "n_sources": 3,
+  "elapsed_s": 1.4
+ },
+ {
+  "id": "EN14",
+  "lang": "en",
+  "cat": "nums",
+  "expected": "false",
+  "sent": "The United States flag has 51 stars, one for each state.",
+  "api_claim": "The United States flag has 51 stars, one for each state.",
+  "verdict": "false",
+  "confidence": 0.95,
+  "probabilities": {
+   "true": 0.0054,
+   "false": 0.9503,
+   "misleading": 0.0359,
+   "unverifiable": 0.0084
+  },
+  "evidence_strength": 2.76,
+  "n_sources": 3,
+  "elapsed_s": 1.8
+ },
+ {
+  "id": "EN15",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "false",
+  "sent": "The Declaration of Independence of the United States was signed by the King of Great Britain.",
+  "api_claim": "The Declaration of Independence of the United States was signed by the King of Great Britain.",
+  "verdict": "false",
+  "confidence": 0.871,
+  "probabilities": {
+   "true": 0.014,
+   "false": 0.8709,
+   "misleading": 0.0542,
+   "unverifiable": 0.0609
+  },
+  "evidence_strength": 2.5,
+  "n_sources": 3,
+  "elapsed_s": 2.2
+ },
+ {
+  "id": "EN16",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "false",
+  "sent": "The Milky Way galaxy contains only our solar system and a few other stars.",
+  "api_claim": "The Milky Way galaxy contains only our solar system and a few other stars.",
+  "verdict": "false",
+  "confidence": 0.961,
+  "probabilities": {
+   "true": 0.0049,
+   "false": 0.9612,
+   "misleading": 0.0254,
+   "unverifiable": 0.0085
+  },
+  "evidence_strength": 2.83,
+  "n_sources": 3,
+  "elapsed_s": 1.4
+ },
+ {
+  "id": "EN17",
+  "lang": "en",
+  "cat": "nums",
+  "expected": "false",
+  "sent": "A light year is a unit of time equal to 1000 years.",
+  "api_claim": "A light year is a unit of time equal to 1000 years.",
+  "verdict": "false",
+  "confidence": 0.969,
+  "probabilities": {
+   "true": 0.004,
+   "false": 0.9691,
+   "misleading": 0.0193,
+   "unverifiable": 0.0076
+  },
+  "evidence_strength": 2.55,
+  "n_sources": 3,
+  "elapsed_s": 2.1
+ },
+ {
+  "id": "EN18",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "misleading",
+  "sent": "The Great Wall of China was built entirely in a few decades during the Ming dynasty.",
+  "api_claim": "The Great Wall of China was built entirely in a few decades during the Ming dynasty.",
+  "verdict": "false",
+  "confidence": 0.703,
+  "probabilities": {
+   "true": 0.009,
+   "false": 0.7032,
+   "misleading": 0.2675,
+   "unverifiable": 0.0203
+  },
+  "evidence_strength": 2.65,
+  "n_sources": 3,
+  "elapsed_s": 2.2
+ },
+ {
+  "id": "EN19",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "Most sharks are harmless to humans, but nearly all shark species are dangerous.",
+  "api_claim": "Most sharks are harmless to humans, but nearly all shark species are dangerous.",
+  "verdict": "false",
+  "confidence": 0.745,
+  "probabilities": {
+   "true": 0.0078,
+   "false": 0.7448,
+   "misleading": 0.2309,
+   "unverifiable": 0.0165
+  },
+  "evidence_strength": 2.68,
+  "n_sources": 3,
+  "elapsed_s": 1.4
+ },
+ {
+  "id": "EN20",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "misleading",
+  "sent": "The Roman Empire lasted for exactly 1000 years, from 27 BC to 93 AD.",
+  "api_claim": "The Roman Empire lasted for exactly 1000 years, from 27 BC to 93 AD.",
+  "verdict": "false",
+  "confidence": 0.869,
+  "probabilities": {
+   "true": 0.0084,
+   "false": 0.8693,
+   "misleading": 0.1039,
+   "unverifiable": 0.0184
+  },
+  "evidence_strength": 2.74,
+  "n_sources": 3,
+  "elapsed_s": 2.5
+ },
+ {
+  "id": "EN21",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "The human body is made of more than 90 percent water.",
+  "api_claim": "The human body is made of more than 90 percent water.",
+  "verdict": "false",
+  "confidence": 0.961,
+  "probabilities": {
+   "true": 0.0048,
+   "false": 0.9611,
+   "misleading": 0.0248,
+   "unverifiable": 0.0093
+  },
+  "evidence_strength": 2.82,
+  "n_sources": 3,
+  "elapsed_s": 1.3
+ },
+ {
+  "id": "EN22",
+  "lang": "en",
+  "cat": "geo",
+  "expected": "misleading",
+  "sent": "The Sahara is the largest hot desert on Earth and also the largest desert in the world.",
+  "api_claim": "The Sahara is the largest hot desert on Earth and also the largest desert in the world.",
+  "verdict": "misleading",
+  "confidence": 0.854,
+  "probabilities": {
+   "true": 0.007,
+   "false": 0.1296,
+   "misleading": 0.8535,
+   "unverifiable": 0.0099
+  },
+  "evidence_strength": 2.7,
+  "n_sources": 3,
+  "elapsed_s": 2.1
+ },
+ {
+  "id": "EN23",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "misleading",
+  "sent": "The printing press, invented by Gutenberg around 1440, made books dramatically cheaper within a few years of its invention.",
+  "api_claim": "The printing press, invented by Gutenberg around 1440, made books dramatically cheaper within a few years of its invention.",
+  "verdict": "misleading",
+  "confidence": 0.733,
+  "probabilities": {
+   "true": 0.1138,
+   "false": 0.027,
+   "misleading": 0.7327,
+   "unverifiable": 0.1265
+  },
+  "evidence_strength": 2.16,
+  "n_sources": 3,
+  "elapsed_s": 2.6
+ },
+ {
+  "id": "EN24",
+  "lang": "en",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "Most of the human body's cells are completely replaced every 10 years.",
+  "api_claim": "Most of the human body's cells are completely replaced every 10 years.",
+  "verdict": "false",
+  "confidence": 0.48,
+  "probabilities": {
+   "true": 0.0127,
+   "false": 0.4796,
+   "misleading": 0.4743,
+   "unverifiable": 0.0334
+  },
+  "evidence_strength": 2.65,
+  "n_sources": 3,
+  "elapsed_s": 4.2
+ },
+ {
+  "id": "EN25",
+  "lang": "en",
+  "cat": "hist",
+  "expected": "misleading",
+  "sent": "The Library of Alexandria was destroyed in a single day by one fire.",
+  "api_claim": "The Library of Alexandria was destroyed in a single day by one fire.",
+  "verdict": "false",
+  "confidence": 0.962,
+  "probabilities": {
+   "true": 0.0051,
+   "false": 0.9623,
+   "misleading": 0.0244,
+   "unverifiable": 0.0082
+  },
+  "evidence_strength": 2.75,
+  "n_sources": 3,
+  "elapsed_s": 2.2
+ },
+ {
+  "id": "IT01",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "L'acqua bolle a 100 gradi Celsius alla pressione atmosferica standard del livello del mare.",
+  "api_claim": "L'acqua bolle a 100 gradi Celsius alla pressione atmosferica standard del livello del mare.",
+  "verdict": "true",
+  "confidence": 0.944,
+  "probabilities": {
+   "true": 0.9437,
+   "false": 0.01,
+   "misleading": 0.0318,
+   "unverifiable": 0.0145
+  },
+  "evidence_strength": 2.77,
+  "n_sources": 3,
+  "elapsed_s": 18.4
+ },
+ {
+  "id": "IT02",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "true",
+  "sent": "Il Colosseo a Roma fu completato intorno all'anno 80 d.C.",
+  "api_claim": "Il Colosseo a Roma fu completato intorno all'anno 80 d.C.",
+  "verdict": "true",
+  "confidence": 0.926,
+  "probabilities": {
+   "true": 0.9259,
+   "false": 0.0119,
+   "misleading": 0.0421,
+   "unverifiable": 0.0201
+  },
+  "evidence_strength": 2.81,
+  "n_sources": 3,
+  "elapsed_s": 2.5
+ },
+ {
+  "id": "IT03",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "true",
+  "sent": "La bandiera nazionale italiana è composta da tre bande verticali: verde, bianca e rossa.",
+  "api_claim": "La bandiera nazionale italiana è composta da tre bande verticali: verde, bianca e rossa.",
+  "verdict": "true",
+  "confidence": 0.97,
+  "probabilities": {
+   "true": 0.9697,
+   "false": 0.0078,
+   "misleading": 0.0143,
+   "unverifiable": 0.0082
+  },
+  "evidence_strength": 2.63,
+  "n_sources": 3,
+  "elapsed_s": 2.3
+ },
+ {
+  "id": "IT04",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "Il Sole è una stella e non un pianeta.",
+  "api_claim": "Il Sole è una stella e non un pianeta.",
+  "verdict": "true",
+  "confidence": 0.955,
+  "probabilities": {
+   "true": 0.9552,
+   "false": 0.0091,
+   "misleading": 0.0235,
+   "unverifiable": 0.0122
+  },
+  "evidence_strength": 2.8,
+  "n_sources": 3,
+  "elapsed_s": 4.3
+ },
+ {
+  "id": "IT05",
+  "lang": "it",
+  "cat": "geo",
+  "expected": "true",
+  "sent": "L'Italia confina a ovest con la Francia, a nord con la Svizzera e l'Austria, e a nord-est con la Slovenia.",
+  "api_claim": "L'Italia confina a ovest con la Francia, a nord con la Svizzera e l'Austria, e a nord-est con la Slovenia.",
+  "verdict": "misleading",
+  "confidence": 0.636,
+  "probabilities": {
+   "true": 0.1987,
+   "false": 0.0808,
+   "misleading": 0.6357,
+   "unverifiable": 0.0848
+  },
+  "evidence_strength": 2.2,
+  "n_sources": 3,
+  "elapsed_s": 10.2
+ },
+ {
+  "id": "IT06",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "L'atmosfera terrestre contiene circa il 78 percento di azoto e il 21 percento di ossigeno.",
+  "api_claim": "L'atmosfera terrestre contiene circa il 78 percento di azoto e il 21 percento di ossigeno.",
+  "verdict": "true",
+  "confidence": 0.894,
+  "probabilities": {
+   "true": 0.894,
+   "false": 0.0174,
+   "misleading": 0.0542,
+   "unverifiable": 0.0344
+  },
+  "evidence_strength": 2.82,
+  "n_sources": 3,
+  "elapsed_s": 2.4
+ },
+ {
+  "id": "IT07",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "true",
+  "sent": "Il Muro di Berlino è caduto nel 1989.",
+  "api_claim": "Il Muro di Berlino è caduto nel 1989.",
+  "verdict": "true",
+  "confidence": 0.98,
+  "probabilities": {
+   "true": 0.9797,
+   "false": 0.0052,
+   "misleading": 0.0074,
+   "unverifiable": 0.0077
+  },
+  "evidence_strength": 2.78,
+  "n_sources": 3,
+  "elapsed_s": 1.7
+ },
+ {
+  "id": "IT08",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "true",
+  "sent": "Il sistema solare ha otto pianeti, da Mercurio a Nettuno.",
+  "api_claim": "Il sistema solare ha otto pianeti, da Mercurio a Nettuno.",
+  "verdict": "true",
+  "confidence": 0.96,
+  "probabilities": {
+   "true": 0.9601,
+   "false": 0.009,
+   "misleading": 0.0189,
+   "unverifiable": 0.012
+  },
+  "evidence_strength": 2.71,
+  "n_sources": 3,
+  "elapsed_s": 12.2
+ },
+ {
+  "id": "IT09",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "true",
+  "sent": "La fotosintesi è il processo con cui le piante convertono la luce del sole in energia chimica.",
+  "api_claim": "La fotosintesi è il processo con cui le piante convertono la luce del sole in energia chimica.",
+  "verdict": "true",
+  "confidence": 0.843,
+  "probabilities": {
+   "true": 0.8425,
+   "false": 0.0194,
+   "misleading": 0.1136,
+   "unverifiable": 0.0245
+  },
+  "evidence_strength": 2.75,
+  "n_sources": 3,
+  "elapsed_s": 2.0
+ },
+ {
+  "id": "IT10",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "false",
+  "sent": "La Statua della Libertà a New York fu donata alla Francia.",
+  "api_claim": "La Statua della Libertà a New York fu donata alla Francia.",
+  "verdict": "false",
+  "confidence": 0.878,
+  "probabilities": {
+   "true": 0.0141,
+   "false": 0.8778,
+   "misleading": 0.0889,
+   "unverifiable": 0.0192
+  },
+  "evidence_strength": 2.52,
+  "n_sources": 3,
+  "elapsed_s": 1.7
+ },
+ {
+  "id": "IT11",
+  "lang": "it",
+  "cat": "sports",
+  "expected": "false",
+  "sent": "La Juventus ha vinto più Coppe dei Campioni della Real Madrid.",
+  "api_claim": "La Juventus ha vinto più Coppe dei Campioni della Real Madrid.",
+  "verdict": "unverifiable",
+  "confidence": 0.637,
+  "probabilities": {
+   "true": 0.01,
+   "false": 0.2561,
+   "misleading": 0.0969,
+   "unverifiable": 0.637
+  },
+  "evidence_strength": 1.42,
+  "n_sources": 3,
+  "elapsed_s": 2.3
+ },
+ {
+  "id": "IT12",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "false",
+  "sent": "La Terra è il pianeta più vicino al Sole.",
+  "api_claim": "La Terra è il pianeta più vicino al Sole.",
+  "verdict": "false",
+  "confidence": 0.974,
+  "probabilities": {
+   "true": 0.0045,
+   "false": 0.9739,
+   "misleading": 0.0131,
+   "unverifiable": 0.0085
+  },
+  "evidence_strength": 2.72,
+  "n_sources": 3,
+  "elapsed_s": 1.6
+ },
+ {
+  "id": "IT13",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "false",
+  "sent": "La piramide di Cheope era alta in origine circa 250 metri.",
+  "api_claim": "La piramide di Cheope era alta in origine circa 250 metri.",
+  "verdict": "false",
+  "confidence": 0.935,
+  "probabilities": {
+   "true": 0.0043,
+   "false": 0.9349,
+   "misleading": 0.0505,
+   "unverifiable": 0.0103
+  },
+  "evidence_strength": 2.78,
+  "n_sources": 3,
+  "elapsed_s": 2.3
+ },
+ {
+  "id": "IT14",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "false",
+  "sent": "Guglielmo Marconi è considerato l'inventore della televisione.",
+  "api_claim": "Guglielmo Marconi è considerato l'inventore della televisione.",
+  "verdict": "false",
+  "confidence": 0.61,
+  "probabilities": {
+   "true": 0.0145,
+   "false": 0.6101,
+   "misleading": 0.2954,
+   "unverifiable": 0.08
+  },
+  "evidence_strength": 2.38,
+  "n_sources": 3,
+  "elapsed_s": 2.1
+ },
+ {
+  "id": "IT15",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "false",
+  "sent": "Un anno luce è un'unità di tempo pari a mille anni.",
+  "api_claim": "Un anno luce è un'unità di tempo pari a mille anni.",
+  "verdict": "false",
+  "confidence": 0.964,
+  "probabilities": {
+   "true": 0.0038,
+   "false": 0.9643,
+   "misleading": 0.0236,
+   "unverifiable": 0.0083
+  },
+  "evidence_strength": 2.61,
+  "n_sources": 3,
+  "elapsed_s": 2.1
+ },
+ {
+  "id": "IT16",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "false",
+  "sent": "I pianeti del sistema solare sono nove, incluso Plutone.",
+  "api_claim": "I pianeti del sistema solare sono nove, incluso Plutone.",
+  "verdict": "false",
+  "confidence": 0.81,
+  "probabilities": {
+   "true": 0.0108,
+   "false": 0.8097,
+   "misleading": 0.1211,
+   "unverifiable": 0.0584
+  },
+  "evidence_strength": 2.76,
+  "n_sources": 3,
+  "elapsed_s": 3.4
+ },
+ {
+  "id": "IT17",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "false",
+  "sent": "L'Italia ha una Dichiarazione d'Indipendenza firmata nel 1776.",
+  "api_claim": "L'Italia ha una Dichiarazione d'Indipendenza firmata nel 1776.",
+  "verdict": "false",
+  "confidence": 0.637,
+  "probabilities": {
+   "true": 0.0189,
+   "false": 0.6366,
+   "misleading": 0.2374,
+   "unverifiable": 0.1071
+  },
+  "evidence_strength": 2.34,
+  "n_sources": 3,
+  "elapsed_s": 18.3
+ },
+ {
+  "id": "IT18",
+  "lang": "it",
+  "cat": "hist",
+  "expected": "misleading",
+  "sent": "I Romani costruirono il Colosseo in pochi anni e lo usarono solo per i combattimenti tra gladiatori.",
+  "api_claim": "I Romani costruirono il Colosseo in pochi anni",
+  "verdict": "true",
+  "confidence": 0.634,
+  "probabilities": {
+   "true": 0.6337,
+   "false": 0.0425,
+   "misleading": 0.2739,
+   "unverifiable": 0.0499
+  },
+  "evidence_strength": 2.47,
+  "n_sources": 3,
+  "elapsed_s": 2.8
+ },
+ {
+  "id": "IT19",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "Il cervello umano pesa circa il 2 percento del peso corporeo, quindi consuma solo il 2 percento dell'energia del corpo.",
+  "api_claim": "Il cervello umano pesa circa il 2 percento del peso corporeo, quindi consuma solo il 2 percento dell'energia del corpo.",
+  "verdict": "false",
+  "confidence": 0.855,
+  "probabilities": {
+   "true": 0.0068,
+   "false": 0.8546,
+   "misleading": 0.1282,
+   "unverifiable": 0.0104
+  },
+  "evidence_strength": 2.78,
+  "n_sources": 3,
+  "elapsed_s": 4.0
+ },
+ {
+  "id": "IT20",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "misleading",
+  "sent": "La città di Roma ha più di 4000 anni di storia.",
+  "api_claim": "La città di Roma ha più di 4000 anni di storia.",
+  "verdict": "unverifiable",
+  "confidence": 0.73,
+  "probabilities": {
+   "true": 0.1281,
+   "false": 0.0146,
+   "misleading": 0.127,
+   "unverifiable": 0.7303
+  },
+  "evidence_strength": 1.5,
+  "n_sources": 3,
+  "elapsed_s": 3.6
+ },
+ {
+  "id": "IT21",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "I dinosauri si estinsero completamente 66 milioni di anni fa e nessun loro discendente esiste oggi.",
+  "api_claim": "I dinosauri si estinsero completamente 66 milioni di anni fa e nessun loro discendente esiste oggi.",
+  "verdict": "misleading",
+  "confidence": 0.467,
+  "probabilities": {
+   "true": 0.0172,
+   "false": 0.4571,
+   "misleading": 0.4668,
+   "unverifiable": 0.0589
+  },
+  "evidence_strength": 2.06,
+  "n_sources": 3,
+  "elapsed_s": 3.9
+ },
+ {
+  "id": "IT22",
+  "lang": "it",
+  "cat": "geo",
+  "expected": "misleading",
+  "sent": "Il sole è più vicino alla Terra durante l'estate nell'emisfero nord, ed è per questo che fa più caldo.",
+  "api_claim": "Il sole è più vicino alla Terra durante l'estate nell'emisfero nord, ed è per questo che fa più caldo.",
+  "verdict": "false",
+  "confidence": 0.586,
+  "probabilities": {
+   "true": 0.0163,
+   "false": 0.5861,
+   "misleading": 0.2947,
+   "unverifiable": 0.1029
+  },
+  "evidence_strength": 2.51,
+  "n_sources": 3,
+  "elapsed_s": 3.0
+ },
+ {
+  "id": "IT23",
+  "lang": "it",
+  "cat": "sci",
+  "expected": "misleading",
+  "sent": "Il cervello umano usa solo il 10 percento delle sue capacità.",
+  "api_claim": "Il cervello umano usa solo il 10 percento delle sue capacità.",
+  "verdict": "false",
+  "confidence": 0.973,
+  "probabilities": {
+   "true": 0.0046,
+   "false": 0.9732,
+   "misleading": 0.0131,
+   "unverifiable": 0.0091
+  },
+  "evidence_strength": 2.65,
+  "n_sources": 3,
+  "elapsed_s": 17.3
+ },
+ {
+  "id": "IT24",
+  "lang": "it",
+  "cat": "nums",
+  "expected": "misleading",
+  "sent": "L'Italia ha una popolazione di circa 60 milioni di abitanti, più alta di quella della Germania.",
+  "api_claim": "L'Italia ha una popolazione di circa 60 milioni di abitanti, più alta di quella della Germania.",
+  "verdict": "misleading",
+  "confidence": 0.58,
+  "probabilities": {
+   "true": 0.0224,
+   "false": 0.2797,
+   "misleading": 0.5804,
+   "unverifiable": 0.1175
+  },
+  "evidence_strength": 1.96,
+  "n_sources": 3,
+  "elapsed_s": 2.8
+ },
+ {
+  "id": "IT25",
+  "lang": "it",
+  "cat": "geo",
+  "expected": "misleading",
+  "sent": "Il Po è il fiume più lungo d'Italia e sfocia nell'Adriatico.",
+  "api_claim": "Il Po è il fiume più lungo d'Italia e sfocia nell'Adriatico.",
+  "verdict": "true",
+  "confidence": 0.796,
+  "probabilities": {
+   "true": 0.7957,
+   "false": 0.0377,
+   "misleading": 0.1064,
+   "unverifiable": 0.0602
+  },
+  "evidence_strength": 2.76,
+  "n_sources": 3,
+  "elapsed_s": 2.6
+ }
+]

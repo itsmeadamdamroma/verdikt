@@ -1,0 +1,17 @@
+services:
+  verdikt:
+    build: .
+    ports:
+      - "8400:8400"
+    environment:
+      # Cloudflare Workers AI — servono entrambe
+      CF_ACCOUNT_ID: ${CF_ACCOUNT_ID:?set CF_ACCOUNT_ID in .env}
+      CF_API_TOKEN: ${CF_API_TOKEN:?set CF_API_TOKEN in .env}
+      VERDIKT_URL: ${VERDIKT_URL:-http://localhost:8400}
+      VERDIKT_DB: /data/verdikt.db
+    volumes:
+      - verdikt-data:/data
+    restart: unless-stopped
+
+volumes:
+  verdikt-data:

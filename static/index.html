@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verdikt · Fact-Checking API</title>
+<meta name="description" content="Fact-checking API for live speech, news and claims. Calibrated verdicts with real sources. Audio in, verdicts out.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark · Verdikt landing · shape: product landing · genre: minimal · posture: restrained
+   theme: custom (ink #05070d, Space Grotesk, emerald #34d399) · hero: settled statement, live demo panel as signature
+   nav: wordmark, four links, one action · footer: mast · signature motion: settle reveal, staggered
+   pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest E: spacing snapped to the 4px scale */
+/* Hallmark · dismissed 58 · about 540 visible words · the docs section is the product: curl samples and schemas are copy */
+/* Hallmark · dismissed 42 · nav keeps its 1px hairline · the wordmark and a single green action carry the bar's shape */
+/* Hallmark · waive 64 · .demo-bar .tag renders POST /v1/check · an endpoint string is code; mono is the code voice */
+  :root {
+    --bg: #05070d;
+    --ink-on-em: #04120c;
+    --panel-deep: rgba(255,255,255,.02);
+    --white-07: rgba(255,255,255,.07);
+    --white-12: rgba(255,255,255,.12);
+    --white-28: rgba(255,255,255,.28);
+    --em-045: rgba(52,211,153,.045);
+    --em-30: rgba(52,211,153,.3);
+    --em-40: rgba(52,211,153,.4);
+    --em-45: rgba(52,211,153,.45);
+    --em-50: rgba(52,211,153,.5);
+    --em-07: rgba(16,185,129,.07);
+    --em-08: rgba(16,185,129,.08);
+    --em-12: rgba(16,185,129,.12);
+    --em-14: rgba(16,185,129,.14);
+    --red-13: rgba(248,113,113,.13);
+    --amber-12: rgba(251,191,36,.12);
+    --slate-13: rgba(148,163,184,.13);
+    --black-28: rgba(0,0,0,.28);
+    --black-35: rgba(0,0,0,.35);
+    --field-line: #6b7280;
+    --code-bg: #070a12;
+    --code-ink: #b7c2d4;
+    --code-dim: #7f8a9c;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --panel: rgba(255,255,255,.03);
+    --panel2: rgba(255,255,255,.05);
+    --line: rgba(255,255,255,.08);
+    --line2: rgba(255,255,255,.14);
+    --text: #e8ecf4;
+    --muted: #98a1b3;
+    --dim: #858fa1;
+    --em: #34d399;
+    --em2: #10b981;
+    --sky: #38bdf8;
+    --red: #f87171;
+    --amber: #fbbf24;
+    --slate: #94a3b8;
+    --font-outlier: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    -webkit-font-smoothing: antialiased; overflow-x: clip;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      linear-gradient(180deg, var(--em-045), transparent 260px),
+      repeating-linear-gradient(90deg, var(--panel-deep) 0 1px, transparent 1px 72px);
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in { display: flex; align-items: center; gap: 28px; height: 62px; }
+  .logo { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: 1.1em; letter-spacing: -.01em; text-decoration: none; color: var(--text); }
+  .logo .mark {
+    width: 24px; height: 24px; border-radius: 8px; flex: none;
+    background: linear-gradient(135deg, var(--em2), var(--sky));
+    display: grid; place-items: center; color: var(--ink-on-em); font-size: .85em; font-weight: 900;
+  }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: .92em; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--em2); color: var(--ink-on-em) !important; font-weight: 700;
+    padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: .9em !important;
+  }
+  .nav-cta:hover { background: var(--em); }
+
+  /* HAMBURGER (menu lives OUTSIDE <nav>: backdrop-filter nav = containing block, clips fixed children) */
+  .burger {
+    display: none; margin-left: auto; background: none; border: 1px solid var(--line2);
+    border-radius: 8px; width: 40px; height: 40px; cursor: pointer; padding: 8px;
+    flex-direction: column; justify-content: center; gap: 4px;
+  }
+  .burger span { display: block; height: 1.6px; background: var(--text); transition: transform .2s, opacity .2s; }
+  .burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.6px) rotate(45deg); }
+  .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+  .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.6px) rotate(-45deg); }
+  .mnav { display: none; }
+
+  /* HERO */
+  .hero { padding: 84px 0 48px; text-align: left; position: relative; overflow: hidden; }
+  .hero > *:not(#mesh) { position: relative; z-index: 1; }
+  #mesh { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: .5; }
+  @media (prefers-reduced-motion: reduce) { #mesh { display: none; } }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.7rem, 6.5vw, 4.3rem); font-weight: 700; letter-spacing: -.03em;
+    line-height: 1.05; margin: 0; max-width: 15ch; text-wrap: balance;
+  }
+  .sub { font-size: 1.12em; color: var(--muted); max-width: 560px; margin: 24px 0 0; }
+  .sub b { color: var(--text); font-weight: 600; }
+  .cta-row { display: flex; gap: 12px; justify-content: flex-start; margin-top: 36px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 12px; font-weight: 700; font-size: 1em;
+    text-decoration: none; cursor: pointer; border: none; transition: transform .15s;
+  }
+  .btn-primary { background: var(--em2); color: var(--ink-on-em); }
+  .btn-primary:hover { transform: translateY(-1px); background: var(--em); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--line2); }
+  .btn-ghost:hover { border-color: var(--white-28); }
+  .stats { display: flex; gap: 40px; justify-content: flex-start; margin-top: 48px; flex-wrap: wrap; }
+  .stat { text-align: left; border-left: 1px solid var(--line2); padding-left: 16px; }
+  .stat .n { font-family: var(--font-outlier); font-size: 1.35em; font-weight: 700; color: var(--em); font-variant-numeric: tabular-nums; }
+  .stat .l { font-size: .78em; color: var(--dim); margin-top: 4px; font-variant-numeric: tabular-nums; }
+
+  section { padding: 64px 0; }
+  section.wrap { padding: 120px 24px 0; }
+  #demo { padding-top: 104px; }
+  #features, #get-key { padding-top: 140px; }
+  #pipeline { padding-top: 132px; }
+  .sec-head { margin-bottom: 32px; }
+  h2 { font-family: var(--font-display); font-size: clamp(1.7rem, 3.6vw, 3.25rem); font-weight: 700; letter-spacing: -.02em; margin-top: 8px; text-wrap: balance; }
+  .sec-sub { color: var(--muted); margin-top: 8px; max-width: 560px; }
+
+  /* DEMO */
+  .demo-panel {
+    background: var(--panel); border: 1px solid var(--line2); border-radius: 12px;
+    overflow: hidden;
+  }
+  .demo-bar {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-bottom: 1px solid var(--line); background: var(--panel-deep);
+  }
+  .demo-bar .tag { font-family: var(--font-outlier); font-size: .78em; color: var(--dim); }
+  .demo-bar .live { margin-left: auto; font-family: var(--font-outlier); font-size: .75em; color: var(--em); display: flex; align-items: center; gap: 8px; }
+  .demo-bar .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--em); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+  .demo-body { padding: 24px 20px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .chip {
+    font-size: .82em; color: var(--muted); background: var(--panel2);
+    border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px;
+    cursor: pointer; transition: color .15s, border-color .15s, background .15s, transform .15s;
+  }
+  .chip:hover { color: var(--text); border-color: var(--line2); }
+  .chip.on { color: var(--em); border-color: var(--em-40); background: var(--em-08); }
+  .demo-input-row { display: flex; gap: 12px; }
+  .demo-input-row input {
+    flex: 1; background: var(--black-35); border: 1px solid var(--field-line); color: var(--text);
+    border-radius: 12px; padding: 12px 16px; font-size: 1em; font-family: inherit;
+  }
+  .demo-input-row input:focus { outline: 2px solid var(--em); outline-offset: 2px; }
+  .run-btn {
+    background: var(--em2); color: var(--ink-on-em); border: none; border-radius: 12px;
+    padding: 12px 24px; font-weight: 700; font-size: .95em; cursor: pointer; white-space: nowrap;
+  }
+  .run-btn:hover { background: var(--em); }
+  .run-btn:active { transform: translateY(0); }
+  .run-btn:disabled { background: var(--panel-deep); color: var(--muted); cursor: not-allowed; }
+  #demo-out { margin-top: 16px; }
+  .v-card {
+    background: var(--black-28); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px; animation: rise .3s ease;
+  }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+  .v-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pill { font-weight: 800; font-size: .82em; padding: 4px 12px; border-radius: 8px; }
+  .p-true { background: var(--em-14); color: var(--em); }
+  .p-false { background: var(--red-13); color: var(--red); }
+  .p-misleading { background: var(--amber-12); color: var(--amber); }
+  .p-unverifiable { background: var(--slate-13); color: var(--slate); }
+  .conf { margin-left: auto; font-family: var(--font-outlier); font-size: .85em; color: var(--muted); }
+  .conf b { color: var(--text); }
+  .bar { height: 6px; border-radius: 4px; background: var(--white-07); margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--em2), var(--sky)); transform-origin: left; transform: scaleX(0); transition: transform .5s ease; }
+  .claim-line { color: var(--muted); font-size: .95em; margin-top: 12px; }
+  .claim-line b { color: var(--text); font-weight: 600; }
+  .expl { font-size: .93em; color: var(--muted); margin-top: 8px; }
+  .probs { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 12px; }
+  .prob { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; }
+  .prob .pl { font-size: .72em; color: var(--dim); }
+  .prob .pv { font-family: var(--font-outlier); font-size: 1em; font-weight: 700; }
+  .srcs { margin-top: 16px; font-size: .85em; color: var(--dim); }
+  .srcs a { color: var(--sky); text-decoration: none; margin-right: 16px; word-break: break-all; }
+  .srcs a:hover { text-decoration: underline; }
+  .demo-note { text-align: center; font-size: .82em; color: var(--dim); margin-top: 16px; }
+  .demo-note b { color: var(--muted); }
+
+  /* FEATURES as spec rows (no cards, no emoji) */
+  .spec { border-top: 1px solid var(--line); }
+  .spec-row {
+    display: grid; grid-template-columns: 210px 1fr; gap: 28px;
+    padding: 24px 0; border-bottom: 1px solid var(--line);
+  }
+  .spec-k { font-family: var(--font-outlier); font-size: .78em; color: var(--em); padding-top: 4px; font-variant-numeric: tabular-nums; }
+  .spec-row h3 { font-size: 1.08em; margin-bottom: 8px; }
+  .spec-row p { color: var(--muted); }
+
+  /* PIPELINE */
+  .pipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; counter-reset: step; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 15px; padding: 20px; position: relative; }
+  .step .num {
+    font-family: var(--font-outlier); font-size: .78em; color: var(--em);
+    border: 1px solid var(--em-30); border-radius: 8px; padding: 4px 8px; display: inline-block; font-variant-numeric: tabular-nums;
+  }
+  .step h3 { font-size: .98em; font-weight: 700; margin: 12px 0 8px; }
+  .step p { font-size: .86em; color: var(--muted); }
+
+  /* LOTTIE */
+  .step-icon { height: 56px; margin: 0 0 10px; display: flex; align-items: flex-end; }
+  .li { display: block; }
+  .li svg, .hero-wave svg, .scan-wait .sa svg { width: 100%; height: 100%; display: block; }
+  .li-44 { width: 44px; height: 44px; }
+  .li-wide { width: 132px; height: 56px; }
+  .hero-wave { width: 96px; height: 40px; margin: 28px 0 0; opacity: .85; }
+  .scan-wait { display: flex; align-items: center; gap: 16px; color: var(--muted); font-size: .92em; }
+  .scan-wait .sa { width: 56px; height: 56px; flex: none; }
+
+  /* CODE */
+  .codeblock { background: var(--code-bg); color: var(--code-ink); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .code-head { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); gap: 12px; }
+  .code-head .t { font-family: var(--font-outlier); font-size: .78em; color: var(--dim); }
+  .copy { margin-left: auto; font-size: .75em; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 8px; padding: 0 16px; min-height: 42px; display: inline-flex; align-items: center; cursor: pointer; }
+  .copy:hover { color: var(--text); border-color: var(--line2); }
+  pre {
+    padding: 20px; overflow-x: auto; font-family: var(--font-outlier);
+    font-size: .85em; line-height: 1.7; color: var(--code-ink);
+  }
+  pre .c { color: var(--code-dim); } pre .g { color: var(--em); } pre .b { color: var(--sky); } pre .y { color: var(--amber); }
+  .code-grid { display: grid; gap: 16px; }
+
+  /* PRICING */
+  .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 980px; margin: 0 auto; }
+  @media (max-width: 640px) { .price-grid { grid-template-columns: 1fr; } }
+  .plan { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 32px 24px; position: relative; }
+  .plan.pro { border-color: var(--em-45); background: linear-gradient(180deg, var(--em-07), var(--panel) 40%); }
+  .plan .pop {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--em2); color: var(--ink-on-em); font-size: .7em; font-weight: 800;
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .plan h3 { font-size: 1.05em; font-weight: 700; }
+  .price { font-family: var(--font-display); font-size: 2.5em; font-weight: 700; letter-spacing: -.03em; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+  .price span { font-size: .38em; color: var(--muted); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .plan ul { list-style: none; margin: 20px 0; }
+  .plan li { font-size: .9em; color: var(--muted); padding: 4px 0; display: flex; gap: 8px; align-items: baseline; }
+  .plan li::before { content: "✓"; color: var(--em); font-weight: 800; font-size: .85em; }
+  .plan .btn { width: 100%; justify-content: center; }
+  .key-out { margin-top: 16px; display: none; }
+  .key-out .codeblock pre { color: var(--em); word-break: break-all; }
+
+  /* FAQ */
+  .faq { max-width: 720px; margin: 0 auto; }
+  details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; margin-bottom: 12px; }
+  details[open] { border-color: var(--line2); }
+  details:not([open]) > *:not(summary) { display: none; }
+  summary { cursor: pointer; font-weight: 700; font-size: .98em; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  summary::after { content: "+"; color: var(--dim); font-size: 1.3em; transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { color: var(--muted); font-size: .92em; margin-top: 12px; }
+
+  footer { border-top: 1px solid var(--line); padding: 72px 0 48px; text-align: center; color: var(--dim); font-size: .85em; background: var(--panel); }
+  footer .f-logo { font-weight: 800; color: var(--muted); margin-bottom: 8px; }
+
+  /* FOCUS + SKIP */
+  .skip { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; z-index: 100; background: var(--em2); color: var(--ink-on-em); font-weight: 700; text-decoration: none; }
+  .skip:focus { position: fixed; top: 16px; left: 16px; width: auto; height: auto; margin: 0; padding: 12px 16px; clip-path: none; border-radius: 0 0 12px 0; }
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--em); outline-offset: 3px; border-radius: 6px;
+  }
+
+  /* MOTION VERB settle: reveal once, stagger inside grids */
+  .js .rv { opacity: 0; transform: translateY(14px); transition: opacity .55s ease, transform .55s ease; }
+  .js .rv.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .rv { opacity: 1; transform: none; transition: none; }
+    .demo-bar .live i { animation: none; }
+    .btn, .feature, .nav-links a:not(.nav-cta)::after { transition: none; }
+  }
+
+  /* HOVER TREATMENTS (not color-only) */
+  .nav-links a:not(.nav-cta) { position: relative; }
+  .nav-links a:not(.nav-cta)::after {
+    content: ""; position: absolute; left: 0; bottom: -5px; width: 100%; height: 1.5px;
+    background: var(--em); transform: scaleX(0); transform-origin: left; transition: transform .22s ease;
+  }
+  .nav-links a:not(.nav-cta):hover::after { transform: scaleX(1); }
+  .btn-ghost:hover { border-color: var(--white-28); transform: translateY(-1px); }
+  .chip:hover { transform: translateY(-1px); }
+  .btn:active, .chip:active, .copy:active { transform: translateY(0); }
+  .step::after {
+    content: "→"; position: absolute; right: -13px; top: 50%; transform: translateY(-50%);
+    color: var(--dim); font-family: var(--font-outlier); z-index: 1;
+  }
+  .step:last-child::after { content: none; }
+  @media (max-width: 900px) { .step::after { content: none; } }
+
+  /* MOBILE */
+  @media (max-width: 720px) {
+    .nav-links { display: none; }
+    .burger { display: flex; }
+    .mnav {
+      position: fixed; top: 62px; left: 0; right: 0; z-index: 49;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line); padding: 8px 16px 24px; flex-direction: column;
+    }
+    .mnav.open { display: flex; }
+    .mnav a { color: var(--text); text-decoration: none; font-size: 1.05em; font-weight: 600; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .mnav a.nav-cta { margin-top: 12px; text-align: center; background: var(--em2); color: var(--ink-on-em) !important; padding: 12px; border-radius: 12px; border: none; font-weight: 700; }
+    .hero { padding: 52px 0 40px; }
+    h1 { font-size: clamp(2.1rem, 9.5vw, 2.8rem); }
+    .sub { font-size: 1em; }
+    .cta-row { flex-direction: column; align-items: stretch; gap: 12px; margin-top: 28px; }
+    .cta-row .btn { justify-content: center; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 36px; }
+    .stat { padding-left: 12px; }
+    section.wrap { padding: 64px 16px 0; }
+    .spec-row { grid-template-columns: 1fr; gap: 8px; padding: 20px 0; }
+    .demo-input-row { flex-direction: column; }
+    .run-btn { width: 100%; }
+    .chip { padding: 8px 16px; }
+    .probs { grid-template-columns: 1fr 1fr; }
+    .plan { padding: 24px; }
+    pre { font-size: .78em; }
+    .wrap { padding: 0 16px; }
+  }
+
+/* ── Command deck · HUD panels, terminal trace, live metrics ── */
+.deck{display:grid;grid-template-columns:300px minmax(0,1fr) 258px;gap:14px;align-items:stretch}
+.deck-panel{position:relative;border:1px solid var(--em-14);border-radius:10px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006))}
+.deck-panel::before,.deck-panel::after{content:"";position:absolute;width:9px;height:9px;border:1px solid var(--em-45);pointer-events:none}
+.deck-panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.deck-panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.deck-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 12px;
+  border-bottom:1px solid var(--em-14);font-family:var(--font-outlier);font-size:10.5px;font-weight:600;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--em)}
+.deck-h span:last-child{color:var(--dim);letter-spacing:.08em}
+.deck-h .dot{width:6px;height:6px;border-radius:50%;background:var(--em);animation:pulse 1.6s infinite}
+.deck-b{padding:12px;position:relative;z-index:1}
+.deck-b .chips{margin-bottom:12px}
+.deck-b .chip{font-size:.78em;padding:6px 11px}
+.deck-b .demo-input-row{flex-direction:column;gap:8px}
+.deck-b .run-btn{width:100%;padding:11px}
+.deck-hint{font-family:var(--font-outlier);font-size:10px;color:var(--dim);margin-top:9px;letter-spacing:.04em}
+.scanline{position:absolute;left:0;right:0;top:0;height:45%;pointer-events:none;z-index:0;
+  background:linear-gradient(180deg,transparent,rgba(52,211,153,.055),transparent);animation:deckSweep 5s linear infinite}
+@keyframes deckSweep{0%{transform:translateY(-110%)}100%{transform:translateY(260%)}}
+.term{font-family:var(--font-outlier);font-size:11px;line-height:1.75;color:#93a3b6;
+  height:168px;overflow:auto;margin-bottom:12px;scrollbar-width:thin}
+.term .ln{opacity:0;transform:translateY(4px);animation:rowin .34s ease forwards}
+.term .k{color:var(--em)}
+.term .w{color:var(--amber)}
+.term .b{color:var(--red)}
+.term .mut{color:#5d6b7c}
+@keyframes rowin{to{opacity:1;transform:none}}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.06);
+  font-family:var(--font-outlier);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.kv:last-child{border-bottom:0}
+.kv b{font-size:15px;letter-spacing:0;color:var(--text);font-weight:600}
+.kv b.em{color:var(--em)}.kv b.rd{color:var(--red)}.kv b.am{color:var(--amber)}
+.strip{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--em-14);
+  border:1px solid var(--em-14);border-radius:10px;overflow:hidden;margin-top:14px}
+.strip>div{background:#070b10;padding:9px 12px}
+.strip .l{font-family:var(--font-outlier);font-size:9.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--dim)}
+.strip .v{font-family:var(--font-outlier);font-size:15px;color:var(--text);margin-top:5px}
+.strip .v.em{color:var(--em)}
+.prog{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden;margin:10px 0 4px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--em2),var(--em));transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+@media(max-width:900px){.deck{grid-template-columns:1fr}.strip{grid-template-columns:repeat(3,1fr)}.term{height:140px}}
+@media(prefers-reduced-motion:reduce){.scanline,.deck-h .dot{animation:none}.term .ln{animation:none;opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#demo">Skip to content</a>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#"><span class="mark">V</span>Verdikt</a>
+    <div class="nav-links">
+      <a href="#demo">Demo</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs</a>
+      <a class="nav-cta" href="#get-key">Get API key</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false" aria-controls="mnav"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mnav" id="mnav">
+  <a href="#demo">Demo</a>
+  <a href="#features">Features</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#docs">Docs</a>
+  <a class="nav-cta" href="#get-key">Get API key</a>
+</div>
+
+<header class="hero wrap">
+  <canvas id="mesh" aria-hidden="true"></canvas>
+  <h1>Every claim.<br>Verified, with sources.</h1>
+  <p class="sub">Fact-checking for <b>live speech and news</b>. Calibrated verdicts, linked evidence.</p>
+  <div class="hero-wave" data-lottie="/lottie/speech.json" aria-hidden="true"></div>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="#demo">Try the live demo ↓</a>
+    <a class="btn btn-ghost" href="#get-key">Get a free API key</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">4</div><div class="l">verdict classes</div></div>
+    <div class="stat"><div class="n">~10s</div><div class="l">audio → verdicts</div></div>
+    <div class="stat"><div class="n">100%</div><div class="l">verdicts with sources</div></div>
+    <div class="stat"><div class="n">$0</div><div class="l">to start</div></div>
+  </div>
+</header>
+
+<section id="demo" class="wrap">
+  <div class="sec-head">
+    <h2>Run a real fact-check</h2>
+    <p class="sec-sub">This calls the production API, the same endpoint you ship with.</p>
+  </div>
+
+  <div class="deck">
+    <div class="deck-panel">
+      <div class="deck-h">Claim intake <span class="dot"></span></div>
+      <div class="deck-b">
+        <div class="chips">
+          <span class="chip">The Great Wall is visible from space.</span>
+          <span class="chip">The Eiffel Tower is in London.</span>
+          <span class="chip">Mount Everest is in Asia.</span>
+        </div>
+        <div class="demo-input-row">
+          <input id="claim" type="text" placeholder="Type a claim…" maxlength="300">
+          <button class="run-btn" id="run" onclick="runDemo()">Verify</button>
+        </div>
+        <div class="deck-hint">POST /v1/check · max_claims=1 · X-API-Key</div>
+      </div>
+    </div>
+
+    <div class="deck-panel">
+      <div class="scanline" aria-hidden="true"></div>
+      <div class="deck-h">Verdict stream <span id="h-lat">idle</span></div>
+      <div class="deck-b">
+        <div class="term" id="term"><div class="ln mut">&gt;&gt;&gt; engine ready · awaiting claim</div></div>
+        <div id="demo-out"></div>
+      </div>
+    </div>
+
+    <div class="deck-panel">
+      <div class="deck-h">Engine</div>
+      <div class="deck-b">
+        <div class="kv"><span>Checks</span><b id="s-checks">0</b></div>
+        <div class="kv"><span>True</span><b class="em" id="s-true">0</b></div>
+        <div class="kv"><span>False</span><b class="rd" id="s-false">0</b></div>
+        <div class="kv"><span>Mixed</span><b class="am" id="s-mixed">0</b></div>
+        <div class="kv"><span>Avg conf</span><b id="s-conf">—</b></div>
+        <div class="kv"><span>Sources</span><b id="s-srcs">0</b></div>
+        <div class="prog"><i id="s-prog"></i></div>
+        <div class="deck-hint" id="s-state">idle</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div><div class="l">Engine</div><div class="v em" id="m-engine">idle</div></div>
+    <div><div class="l">Claims</div><div class="v" id="m-claims">0</div></div>
+    <div><div class="l">True</div><div class="v" id="m-true">0</div></div>
+    <div><div class="l">False</div><div class="v" id="m-false">0</div></div>
+    <div><div class="l">Avg conf</div><div class="v" id="m-conf">—</div></div>
+    <div><div class="l">Latency</div><div class="v" id="m-lat">—</div></div>
+  </div>
+  <div class="demo-note">Free demo. <b>Calibrated probabilities, real sources</b>.</div>
+</section>
+
+<section id="features" class="wrap">
+  <div class="sec-head">
+    <h2>Built for truth, not for vibes</h2>
+  </div>
+  <div class="spec">
+    <div class="spec-row"><div class="spec-k">01 · Calibration</div><div><h3>Calibrated, not confident</h3><p>When we say 90%, we’re right 90% of the time (Cloudflare Clef).</p></div></div>
+    <div class="spec-row"><div class="spec-k">02 · Evidence</div><div><h3>Real sources, always</h3><p>Linked web citations. Unverifiable claims are marked, never guessed.</p></div></div>
+    <div class="spec-row"><div class="spec-k">03 · Audio</div><div><h3>Audio in, verdicts out</h3><p>Audio or video in, verdicts out, in one call: speeches, podcasts, meetings.</p></div></div>
+    <div class="spec-row"><div class="spec-k">04 · Cost</div><div><h3>Fast &amp; cheap</h3><p>Verdicts land in seconds, at a fraction of LLM cost.</p></div></div>
+  </div>
+</section>
+
+<section id="pipeline" class="wrap">
+  <div class="sec-head">
+    <h2>Four steps, one API call</h2>
+  </div>
+  <div class="pipe">
+    <div class="step"><div class="step-icon"><div class="li li-44" data-lottie="/lottie/transcribe.json" aria-hidden="true"></div></div><span class="num">01</span><h3>Transcribe</h3><p>faster-whisper turns audio/video into clean text, on-device.</p></div>
+    <div class="step"><div class="step-icon"><div class="li li-wide" data-lottie="/lottie/claims.json" aria-hidden="true"></div></div><span class="num">02</span><h3>Extract claims</h3><p>Statements pulled verbatim, no paraphrasing drift.</p></div>
+    <div class="step"><div class="step-icon"><div class="li li-44" data-lottie="/lottie/evidence.json" aria-hidden="true"></div></div><span class="num">03</span><h3>Retrieve evidence</h3><p>Open-web search gathers sources per claim.</p></div>
+    <div class="step"><div class="step-icon"><div class="li li-44" data-lottie="/lottie/verdict.json" aria-hidden="true"></div></div><span class="num">04</span><h3>Verdict</h3><p>The model outputs a verdict plus calibrated probability.</p></div>
+  </div>
+</section>
+
+<section id="docs" class="wrap">
+  <div class="sec-head">
+    <h2>Two endpoints. That’s it.</h2>
+  </div>
+  <div class="code-grid">
+    <div class="codeblock">
+      <div class="code-head"><span class="t">Text claim</span><button class="copy" onclick="cp(this)">Copy</button></div>
+      <pre><span class="c"># Fact-check a text claim</span>
+curl -X POST <span class="b">https://verdikt.mazzagrp.com/v1/check</span> \
+  -H <span class="y">"X-API-Key: $VERDIKT_KEY"</span> \
+  -H <span class="y">"Content-Type: application/json"</span> \
+  -d <span class="y">'{"text": "The Great Wall is visible from space", "max_claims": 3}</span>'
+
+<span class="c"># → {"results":[{"verdict":"misleading","confidence":0.87,
+#     "probabilities":{...}, "sources":[...]}]}</span></pre>
+    </div>
+    <div class="codeblock">
+      <div class="code-head"><span class="t">Audio / video file</span><button class="copy" onclick="cp(this)">Copy</button></div>
+      <pre><span class="c"># Speeches, podcasts, recordings (max 25MB)</span>
+curl -X POST <span class="b">https://verdikt.mazzagrp.com/v1/check/audio</span> \
+  -H <span class="y">"X-API-Key: $VERDIKT_KEY"</span> \
+  -F <span class="y">"file=@speech.mp3"</span> -F <span class="y">"max_claims=5"</span>
+
+<span class="c"># → {"transcript": "...", "results": [...same schema...],
+#     "quota": {"used": 3, "limit": 100}}</span></pre>
+    </div>
+    <div class="codeblock">
+      <div class="code-head"><span class="t">Quota &amp; usage</span><button class="copy" onclick="cp(this)">Copy</button></div>
+      <pre>curl <span class="b">https://verdikt.mazzagrp.com/v1/usage</span> -H <span class="y">"X-API-Key: $VERDIKT_KEY"</span>
+
+<span class="c"># → {"plan":"free","used":12,"limit":100,"remaining":88}</span></pre>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="wrap">
+  <div class="sec-head">
+    <h2>Start free. Scale when it sticks.</h2>
+  </div>
+  <div class="price-grid">
+    <div class="plan">
+      <h3>Free</h3>
+      <div class="price">$0</div>
+      <ul>
+        <li>100 checks / day</li>
+        <li>Text + audio endpoints</li>
+        <li>Full sources &amp; probabilities</li>
+        <li>No credit card</li>
+      </ul>
+      <button class="btn btn-ghost" onclick="getKey(this)">Get API key</button>
+      <div class="key-out" id="key-out">
+        <div class="codeblock"><pre id="key-val"></pre></div>
+      </div>
+    </div>
+    <div class="plan pro">
+      <div class="pop">Most popular</div>
+      <h3>Pro</h3>
+      <div class="price">$29<span>/mo</span></div>
+      <ul>
+        <li>5,000 checks / day</li>
+        <li>Priority rate limits</li>
+        <li>Audio up to 25MB</li>
+        <li>Email support</li>
+      </ul>
+      <button class="btn btn-primary" id="go-pro" onclick="goPro(this)">Go Pro · $29/mo</button>
+    </div>
+  </div>
+</section>
+
+<section id="get-key" class="wrap">
+  <div class="sec-head">
+    <h2>Grab a key, make your first call in 60 seconds</h2>
+  </div>
+  <div class="codeblock">
+    <div class="code-head"><span class="t">quickstart.sh</span><button class="copy" onclick="cp(this)">Copy</button></div>
+    <pre><span class="c"># Get a free key</span>
+curl -X POST <span class="b">https://verdikt.mazzagrp.com/v1/signup</span> \
+  -H <span class="y">"Content-Type: application/json"</span> -d <span class="y">'{"email":"you@company.com"}'</span>
+
+<span class="c"># Verify a claim</span>
+export VERDIKT_KEY=<span class="g">vk_...</span>
+curl -X POST <span class="b">https://verdikt.mazzagrp.com/v1/check</span> \
+  -H <span class="y">"X-API-Key: $VERDIKT_KEY"</span> -H <span class="y">"Content-Type: application/json"</span> \
+  -d <span class="y">'{"text":"Your claim here"}'</span></pre>
+  </div>
+</section>
+
+<section id="faq" class="wrap">
+  <div class="sec-head">
+    <h2>Quick answers</h2>
+  </div>
+  <div class="faq">
+    <details open><summary>How is this different from asking ChatGPT?</summary><p>LLMs generate plausible text. Verdikt runs a decision model on retrieved evidence and returns calibrated probabilities with sources, and labels unverifiable claims instead of guessing.</p></details>
+    <details><summary>What languages are supported?</summary><p>Claims in English and Italian today; transcription supports 90+ languages via faster-whisper. Evidence retrieval falls back to English sources when local ones are thin.</p></details>
+    <details><summary>What do the 4 verdicts mean?</summary><p><b>true</b>: evidence supports it. <b>false</b>: evidence contradicts it. <b>misleading</b>: partially true but distorted. <b>unverifiable</b>: not enough independent evidence; we never guess.</p></details>
+    <details><summary>Do you store my audio?</summary><p>No. Audio is transcribed in a temp file that is deleted immediately after processing; only aggregated usage counters are kept.</p></details>
+  </div>
+</section>
+
+<footer>
+  <div class="f-logo">⬢ Verdikt</div>
+  <div>Calibrated fact-checking API. Powered by Cloudflare Clef, faster-whisper &amp; open-web evidence.</div>
+  <div style="margin-top:6px">© <span id="yr"></span> CashClaw AI Systems · <a href="mailto:hello@mazzagrp.com" style="color:var(--muted)">hello@mazzagrp.com</a></div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+function cp(btn) {
+  const pre = btn.closest('.codeblock').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copied ✓'; setTimeout(() => btn.textContent = 'Copy', 1600);
+  });
+}
+
+let DEMO_KEY = null;
+async function demoKey() {
+  if (DEMO_KEY) return DEMO_KEY;
+  DEMO_KEY = localStorage.getItem('vk_demo_key');
+  if (DEMO_KEY) return DEMO_KEY;
+  const r = await fetch('/v1/signup', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: ''})});
+  const d = await r.json();
+  DEMO_KEY = d.api_key;
+  localStorage.setItem('vk_demo_key', DEMO_KEY);
+  return DEMO_KEY;
+}
+
+async function goPro(btn) {
+  btn.disabled = true; btn.textContent = 'Setting up checkout…';
+  try {
+    const key = await demoKey();
+    const r = await fetch('/v1/pro/checkout', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({api_key: key})
+    });
+    const d = await r.json();
+    if (!d.url) throw new Error(d.error || 'no checkout url');
+    location.href = d.url;
+  } catch (e) {
+    alert('Checkout non disponibile: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Go Pro · $29/mo';
+  }
+}
+
+if (new URLSearchParams(location.search).get('upgraded') === '1') {
+  alert('Benvenuto su Verdikt Pro! La tua chiave è aggiornata: 5000 check/giorno.');
+}
+
+const CHIPS = document.querySelectorAll('.chip');
+CHIPS.forEach(ch => ch.addEventListener('click', () => {
+  CHIPS.forEach(c => c.classList.remove('on')); ch.classList.add('on');
+  document.getElementById('claim').value = ch.textContent.trim();
+  runDemo();
+}));
+
+const ICONS = {true: '✓', false: '✗', misleading: '⚠', unverifiable: '?'};
+
+const DECK = {checks:0, t:0, f:0, m:0, conf:[], srcs:0};
+
+function tline(html, cls) {
+  const term = document.getElementById('term');
+  const d = document.createElement('div');
+  d.className = 'ln' + (cls ? ' ' + cls : '');
+  d.innerHTML = html;
+  term.appendChild(d);
+  term.scrollTop = term.scrollHeight;
+  return d;
+}
+
+function deckSync() {
+  const avg = DECK.conf.length ? Math.round(DECK.conf.reduce((a, b) => a + b, 0) / DECK.conf.length * 100) + '%' : '—';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('s-checks', DECK.checks); set('m-claims', DECK.checks);
+  set('s-true', DECK.t); set('m-true', DECK.t);
+  set('s-false', DECK.f); set('m-false', DECK.f);
+  set('s-mixed', DECK.m);
+  set('s-conf', avg); set('m-conf', avg);
+  set('s-srcs', DECK.srcs);
+}
+
+function deckProgress(p) {
+  const el = document.getElementById('s-prog');
+  if (el) el.style.transform = 'scaleX(' + Math.max(0, Math.min(1, p)) + ')';
+}
+
+async function runDemo() {
+  const input = document.getElementById('claim');
+  const out = document.getElementById('demo-out');
+  const btn = document.getElementById('run');
+  const text = (input.value || '').trim();
+  if (!text) { input.focus(); return; }
+  const term = document.getElementById('term');
+  term.innerHTML = '';
+  out.innerHTML = '';
+  btn.disabled = true; btn.textContent = 'Verifying…';
+  document.getElementById('s-state').textContent = 'running';
+  document.getElementById('m-engine').textContent = 'running';
+  deckProgress(0.06);
+
+  const t0 = performance.now();
+  tline('<span class="k">&gt;&gt;&gt; tool_call</span> check_claim', '');
+  tline('<span class="mut">{ "text": "' + esc(text.slice(0, 64)) + (text.length > 64 ? '…' : '') + '", "max_claims": 1 }</span>');
+  tline('[CONFIG] model=clef · split=held-out · sources=live', 'mut');
+
+  try {
+    const key = await demoKey();
+    tline('<span class="k">&gt;&gt;&gt;</span> POST /v1/check', '');
+    deckProgress(0.3);
+    const r = await fetch('/v1/check', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-API-Key': key},
+      body: JSON.stringify({text, max_claims: 1})
+    });
+    if (r.status === 401 || r.status === 429) { DEMO_KEY = null; localStorage.removeItem('vk_demo_key'); throw new Error('key'); }
+    if (!r.ok) throw new Error('http ' + r.status);
+    const d = await r.json();
+    const ms = Math.round(performance.now() - t0);
+    deckProgress(0.72);
+    tline('<span class="k">←</span> 200 OK · ' + ms + 'ms · ' + ((d.results || []).length) + ' claim(s)', '');
+    const v = d.results && d.results[0];
+    if (!v) {
+      tline('<span class="w">! no checkable factual claim detected</span>', '');
+      out.innerHTML = '<div class="v-card"><span class="pill p-unverifiable">no claim</span><div class="expl">No checkable factual claim detected in that text.</div></div>';
+      deckProgress(1); return;
+    }
+    tline('<span class="k">&gt;&gt;&gt;</span> claim isolated · retrieving evidence', '');
+    tline('sources: ' + ((v.sources || []).length) + ' · scoring', 'mut');
+    const cls = 'p-' + v.verdict;
+    const conf = Math.round((v.confidence || 0) * 100);
+    tline('VERDICT <span class="k">' + v.verdict.toUpperCase() + '</span> · conf ' + conf + '%', v.verdict === 'false' ? 'b' : '');
+
+    DECK.checks++; DECK.conf.push(v.confidence || 0); DECK.srcs += (v.sources || []).length;
+    if (v.verdict === 'true') DECK.t++; else if (v.verdict === 'false') DECK.f++; else DECK.m++;
+    deckSync();
+    document.getElementById('m-lat').textContent = ms + 'ms';
+    document.getElementById('h-lat').textContent = ms + 'ms';
+    deckProgress(1);
+    document.getElementById('s-state').textContent = 'idle';
+    document.getElementById('m-engine').textContent = 'ready';
+
+    const probs = v.probabilities || {};
+    const probRows = Object.entries(probs).map(([k, val]) =>
+      '<div class="prob"><div class="pl">' + k + '</div><div class="pv">' + Math.round(val * 100) + '%</div></div>').join('');
+    const srcs = (v.sources || []).slice(0, 4).map(u => '<a href="' + u + '" target="_blank" rel="noopener">' + u.replace(/^https?:\/\//, '').split('/')[0] + '</a>').join('');
+    out.innerHTML =
+      '<div class="v-card">' +
+        '<div class="v-top"><span class="pill ' + cls + '">' + (ICONS[v.verdict] || '') + ' ' + v.verdict + '</span>' +
+        '<span class="conf">confidence <b>' + conf + '%</b></span></div>' +
+        '<div class="bar"><i style="transform:scaleX(' + (v.confidence || 0) + ')"></i></div>' +
+        '<div class="claim-line">Claim: <b>' + esc(v.claim) + '</b></div>' +
+        '<div class="expl">' + esc(v.explanation || '') + '</div>' +
+        (probRows ? '<div class="probs">' + probRows + '</div>' : '') +
+        (srcs ? '<div class="srcs">Sources: ' + srcs + '</div>' : '') +
+      '</div>';
+  } catch (e) {
+    tline('<span class="b">! error: ' + esc(String(e.message || e)) + '</span>', '');
+    out.innerHTML = '<div class="v-card"><span class="pill p-unverifiable">error</span><div class="expl">Demo hiccup (' + esc(String(e.message || e)) + '). Try again in a moment.</div></div>';
+    document.getElementById('s-state').textContent = 'error';
+    document.getElementById('m-engine').textContent = 'error';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Verify';
+  }
+}
+
+
+/* ── Hero mesh: drifting nodes, short links. Paused off-screen, off under reduced motion. ── */
+(function () {
+  const cv = document.getElementById('mesh');
+  if (!cv) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ctx = cv.getContext('2d');
+  const DPR = Math.min(devicePixelRatio || 1, 1.5);
+  let W = 0, H = 0, nodes = [], raf = 0, visible = true;
+  const N = innerWidth <= 820 ? 22 : 46, LINK = 132;
+
+  function size() {
+    const r = cv.parentElement.getBoundingClientRect();
+    W = r.width; H = r.height;
+    cv.width = W * DPR; cv.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    nodes = Array.from({ length: N }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22,
+      r: Math.random() * 1.6 + .7
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (const n of nodes) {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    }
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < LINK) {
+          ctx.strokeStyle = 'rgba(52,211,153,' + (0.30 * (1 - d / LINK)).toFixed(3) + ')';
+          ctx.lineWidth = .6;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        }
+      }
+    }
+    for (const n of nodes) {
+      ctx.fillStyle = 'rgba(52,211,153,.62)';
+      ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fill();
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!raf && visible && !reduce) raf = requestAnimationFrame(frame); }
+  function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+
+  size();
+  if (reduce) { /* draw one static frame */ frame(); stop(); }
+  else start();
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; visible ? start() : stop(); }, { threshold: 0 }).observe(cv);
+  addEventListener('resize', () => { stop(); size(); start(); }, { passive: true });
+})();
+
+/* ── Count-up on the hero stats (integers only) ── */
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const els = [...document.querySelectorAll('.hero .stat .n')].filter(e => /^\d+$/.test(e.textContent.trim()));
+  if (!els.length) return;
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    io.unobserve(e.target);
+    const target = parseInt(e.target.textContent, 10), t0 = performance.now(), D = 900;
+    (function tick(t) {
+      const p = Math.min(1, (t - t0) / D), v = Math.round(target * (1 - Math.pow(1 - p, 3)));
+      e.target.textContent = v;
+      if (p < 1) requestAnimationFrame(tick);
+    })(t0);
+  }), { threshold: .5 });
+  els.forEach(e => io.observe(e));
+})();
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+async function getKey(btn) {
+  btn.disabled = true; btn.textContent = 'Generating…';
+  try {
+    const r = await fetch('/v1/signup', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({email: ''})});
+    const d = await r.json();
+    const box = document.getElementById('key-out');
+    document.getElementById('key-val').textContent = d.api_key;
+    box.style.display = 'block';
+    btn.textContent = '✓ Key ready below';
+  } catch (e) { btn.textContent = 'Error, retry'; }
+  btn.disabled = false;
+}
+
+document.getElementById('claim').addEventListener('keydown', e => { if (e.key === 'Enter') runDemo(); });
+
+/* Reveal: settle once on scroll, stagger inside grids. Off under reduced motion. */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: .12 });
+  document.querySelectorAll('.sec-head, .demo-panel, .spec-row, .step, .codeblock, .plan, details').forEach(el => {
+    el.classList.add('rv'); io.observe(el);
+  });
+  document.querySelectorAll('.spec, .pipe').forEach(g =>
+    [...g.children].forEach((el, i) => { el.style.transitionDelay = (i * 70) + 'ms'; }));
+}
+
+/* Hamburger */
+const burger = document.getElementById('burger'), mnav = document.getElementById('mnav');
+function closeMenu() { mnav.classList.remove('open'); burger.setAttribute('aria-expanded', 'false'); }
+burger.addEventListener('click', () => {
+  burger.setAttribute('aria-expanded', String(mnav.classList.toggle('open')));
+});
+mnav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+addEventListener('resize', () => { if (innerWidth > 720) closeMenu(); });
+
+/* Lottie: self-hosted icons. Play only while visible; off under reduced motion or if lottie fails to load. */
+const LT_OFF = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const LT_REG = {};
+function lottieInit(el, src) {
+  if (!el || LT_OFF || !window.lottie) return;
+  const id = el.id;
+  if (id && LT_REG[id]) { try { LT_REG[id].destroy(); } catch (e) {} delete LT_REG[id]; }
+  try {
+    const a = window.lottie.loadAnimation({ container: el, renderer: 'svg', loop: true, autoplay: true, path: src });
+    if (id) LT_REG[id] = a;
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(e => { e.isIntersecting ? a.play() : a.pause(); }), { threshold: .1 });
+      io.observe(el);
+    }
+  } catch (err) {}
+}
+if (!LT_OFF) {
+  const lottieStart = () => document.querySelectorAll('[data-lottie]').forEach(el => lottieInit(el, el.getAttribute('data-lottie')));
+  if (window.lottie) lottieStart();
+  else { // Rocket Loader (CF) may define window.lottie after DOMContentLoaded — poll up to 4s
+    let n = 0;
+    const t = setInterval(() => { if (window.lottie || ++n > 40) { clearInterval(t); if (window.lottie) lottieStart(); } }, 100);
+  }
+}
+</script>
+<script defer src="/lottie.min.js"></script>
+</body>
+</html>

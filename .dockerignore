@@ -1,0 +1,8 @@
+.git
+__pycache__
+*.pyc
+stripe.env
+verdikt.db
+evidence_cache
+*.log
+benchmark/

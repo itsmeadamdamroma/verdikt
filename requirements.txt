@@ -1,0 +1,4 @@
+starlette==1.7.0
+uvicorn==0.52.4
+ddgs==9.16.0
+python-multipart==0.0.32
